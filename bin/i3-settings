@@ -1,0 +1,7 @@
+#! /bin/bash
+
+pkill pasystray
+
+TRACKPAD_ID=$(xinput list | grep Touchpad | grep -oP 'id=(\w*)' | cut -d = -f 2)
+ENABLE_TAP_ENABLED=$(xinput list-props $TRACKPAD_ID | grep 'Tapping Enabled (' | grep -oP '\(.*\)' | tr -d '()')
+xinput set-prop $TRACKPAD_ID $ENABLE_TAP_ENABLED 1
