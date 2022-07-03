@@ -2,6 +2,7 @@
 
 bootstrap:
 	sudo bash bootstrap.sh
+	sudo chmod a+w /sys/class/backlight/intel_backlight/brightness
 
 dunst:
 	mkdir ~/.config/dunst

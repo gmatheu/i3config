@@ -7,4 +7,3 @@ ENABLE_TAP_ENABLED=$(xinput list-props $TRACKPAD_ID | grep 'Tapping Enabled (' |
 xinput set-prop $TRACKPAD_ID $ENABLE_TAP_ENABLED 1
 
 
-sudo chmod a+w /sys/class/backlight/intel_backlight/brightness
