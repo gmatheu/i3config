@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pgrep shutter || shutter --min_at_startup

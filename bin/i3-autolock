@@ -1,0 +1,7 @@
+#!/bin/sh
+
+LOCKWALL=${@:-i3lock -i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png}
+exec xautolock -detectsleep
+  -time 3 -locker "i3lock ${LOCKWALL}" \
+  -notify 30 \
+  -notifier "notify-send -u critical -t 10000 -- 'LOCKING screen in 30 seconds'"
