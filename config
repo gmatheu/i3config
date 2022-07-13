@@ -71,7 +71,7 @@ bindsym $mod+Shift+x exec $i3path/i3-screen
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec_always --no-startup-id $i3path/i3-settings
 exec_always --no-startup-id nm-applet
-exec_always --no-startup-id $i3path/i3-shutter
+exec_always --no-startup-id flameshot
 exec_always --no-startup-id blueman-applet
 exec_always --no-startup-id pasystray
 # exec_always --no-startup-id diodon
@@ -100,7 +100,11 @@ bindsym XF86AudioPrev exec playerctl previous
 floating_modifier $mod
 
 # Enable Print Screen
-bindsym --release Ctrl+Shift+5 exec shutter -s
+bindsym --release Ctrl+Shift+4 exec flameshot launcher
+bindsym --release Ctrl+Shift+5 exec flameshot gui
+bindsym --release Ctrl+Shift+6 exec flameshot screen
+bindsym --release Ctrl+Shift+7 exec flameshot full
+
 
 # change focus
 bindsym $mod+h focus left
