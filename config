@@ -9,7 +9,13 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
-set $mod Mod4
+###############################################################################
+# Meta Key Mappings
+###############################################################################
+
+# Meta Key - Alt key is Mod1, and Windows key is Mod4
+set_from_resource $mod  i3-wm.mod Mod4
+set_from_resource $alt  i3-wm.alt Mod1
 
 set_from_resource $darkred     color1  #000000
 set_from_resource $red         color9  #000000
@@ -46,6 +52,7 @@ font pango:Hack, FontAwesome 12
 # they are included here as an example. Modify as you see fit.
 
 # Home for executable scripts
+set $i3home ~/.config/i3
 set $i3path ~/.config/i3/bin
 set $i3lockargs -i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png
 set $i3lockwall i3lock --nofork $i3lockargs
@@ -160,7 +167,11 @@ bindsym $mod+z focus child
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
+# U+1F427
+# set $ws1 "1:🐧"
 set $ws1 "1:term"
+# U+1F30E
+# set $ws2 "2:🌎"
 set $ws2 "2:browser"
 set $ws3 "3:slack"
 set $ws4 "4:teams"
@@ -169,7 +180,9 @@ set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
-set $ws10 "10: settings"
+# U+1F529
+# set $ws10 "10:🔩"
+set $ws10 "10:settings"
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -259,28 +272,6 @@ for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
 
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-# bar {
-# 	font pango:monospace 10
-#         status_command i3status
-# }
-bar {
-    status_command i3blocks
-    position bottom
-    font pango:Hack, FontAwesome 12
-
-    colors {
-        background #253941
-        statusline $offwhite
-        focused_workspace #fdf6e3 #6c71c4 $white
-        active_workspace #fdf6e3 #6c71c4 $white
-        inactive_workspace #002b36 #586e75 $white
-        urgent_workspace #d33682 #d33682 #fdf6e3
-
-        separator          $transparent
-  }
-}
 
 
 # Bind App to workspace
@@ -310,3 +301,11 @@ focus_on_window_activation focus
 
 # Rename workspace with i3-input using numbers and text
 bindsym $mod+n exec i3-input -F 'rename workspace to "%s"' -P 'New name for this workspace: '
+
+
+###############################################################################
+# i3 Config Partials
+###############################################################################
+
+# Include any user i3 partials
+include $HOME/.config/i3/config.d/*

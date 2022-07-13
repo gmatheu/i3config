@@ -1,7 +1,10 @@
 
 
-bootstrap:
+bootstrap: dependencies permissions
+
+dependencies:
 	sudo bash bootstrap.sh
+permissions:
 	sudo chmod a+w /sys/class/backlight/intel_backlight/brightness
 
 dunst:
