@@ -1,3 +1,9 @@
 [submodule "rofi/rofi"]
 	path = rofi/rofi
 	url = https://github.com/adi1090x/rofi.git
+[submodule "rofi/networkmanager-dmenu"]
+	path = rofi/networkmanager-dmenu
+	url = https://github.com/firecat53/networkmanager-dmenu.git
+[submodule "rofi/rofi-bluetooth"]
+	path = rofi/rofi-bluetooth
+	url = https://github.com/ClydeDroid/rofi-bluetooth

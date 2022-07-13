@@ -36,5 +36,13 @@ ${CONFIG_HOME}/rofi:
 	mkdir $@
 ${CONFIG_HOME}/rofi/config.rasi:
 	(cd rofi/rofi && echo 1 | bash setup.sh)
-rofi-config: ${CONFIG_HOME}/rofi/config.rasi
+
+${CONFIG_HOME}/networkmanager-dmenu:
+	mkdir $@
+
+${CONFIG_HOME}/networkmanager-dmenu/config.ini:
+	ln -sf $(CURDIR)/rofi/networkmanager-dmenu.config.ini $@
+
+rofi-config: ${CONFIG_HOME}/rofi/config.rasi ${CONFIG_HOME}/networkmanager-dmenu/config.ini
+
 
