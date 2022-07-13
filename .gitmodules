@@ -7,3 +7,6 @@
 [submodule "rofi/rofi-bluetooth"]
 	path = rofi/rofi-bluetooth
 	url = https://github.com/ClydeDroid/rofi-bluetooth
+[submodule "rofi/rofi-monitor-selector"]
+	path = rofi/rofi-monitor-selector
+	url = https://github.com/qboileau/rofi-monitor-selector.git
