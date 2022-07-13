@@ -23,7 +23,6 @@ try-dunst:
 	notify-send "A Test notification"
 
 
-configure: dunstrc
 
 
 ${CONFIG_HOME}/i3blocks:
@@ -32,9 +31,10 @@ ${CONFIG_HOME}/i3blocks/config: ${CONFIG_HOME}/i3blocks
 	ln -sf $(CURDIR)/i3blocks/config $@
 i3blocks-config: ${CONFIG_HOME}/i3blocks/config
 
-${CONFIG_HOME}/rofi:
+ROFI_HOME=${CONFIG_HOME}/rofi
+${ROFI_HOME}:
 	mkdir $@
-${CONFIG_HOME}/rofi/config.rasi:
+${ROFI_HOME}/config.rasi:
 	(cd rofi/rofi && echo 1 | bash setup.sh)
 
 ${CONFIG_HOME}/networkmanager-dmenu:
@@ -43,6 +43,13 @@ ${CONFIG_HOME}/networkmanager-dmenu:
 ${CONFIG_HOME}/networkmanager-dmenu/config.ini:
 	ln -sf $(CURDIR)/rofi/networkmanager-dmenu.config.ini $@
 
-rofi-config: ${CONFIG_HOME}/rofi/config.rasi ${CONFIG_HOME}/networkmanager-dmenu/config.ini
+${ROFI_HOME}/monitor-switcher.rasi:
+	ln -sf $(CURDIR)/rofi/rofi-monitor-selector/rofi-theme/monitor-switcher.rasi $@
+${ROFI_HOME}/arc_dark_transparent_colors.rasi:
+	ln -sf $(CURDIR)/rofi/rofi-monitor-selector/rofi-theme/arc_dark_transparent_colors.rasi $@
+rofi-monitor-selector-config: ${ROFI_HOME}/monitor-switcher.rasi ${ROFI_HOME}/arc_dark_transparent_colors.rasi
+
+rofi-config: ${ROFI_HOME}/config.rasi ${CONFIG_HOME}/networkmanager-dmenu/config.ini rofi-monitor-selector-config
 
 
+configure: dunstrc rofi-config i3blocks-config

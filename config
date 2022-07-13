@@ -118,6 +118,7 @@ bindsym --release Ctrl+Shift+5 exec shutter -s
 
 bindsym $mod+Shift+b exec $i3home/rofi/rofi-bluetooth/rofi-bluetooth
 bindsym $mod+Shift+n exec $i3home/rofi/networkmanager-dmenu/networkmanager_dmenu
+bindsym $mod+Shift+m exec python3 $i3home/rofi/rofi-monitor-selector/monitor-switcher.py
 
 
 # change focus
