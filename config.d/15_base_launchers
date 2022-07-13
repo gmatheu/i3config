@@ -1,0 +1,15 @@
+###############################################################################
+# Launcher dialogs
+###############################################################################
+
+## Launch // Terminal // <> Enter ##
+set_from_resource $i3-wm.binding.terminal i3-wm.binding.terminal Return
+bindsym $mod+$i3-wm.binding.terminal exec i3-sensible-terminal
+
+# ## Launch // Browser // <><Shift> Enter ##
+# set_from_resource $i3-wm.binding.browser i3-wm.binding.browser Shift+Return
+# bindsym $mod+$i3-wm.binding.browser exec --no-startup-id gtk-launch $(xdg-settings get default-web-browser)
+
+bindsym $mod+d exec --no-startup-id $i3path/i3-launcher
+bindsym $mod+Shift+d exec --no-startup-id $i3path/i3-launcher window
+bindsym $mod+Shift+f exec $i3path/i3-finder
