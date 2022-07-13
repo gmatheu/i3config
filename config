@@ -74,7 +74,7 @@ exec_always --no-startup-id nm-applet
 exec_always --no-startup-id $i3path/i3-shutter
 exec_always --no-startup-id blueman-applet
 exec_always --no-startup-id pasystray
-exec_always --no-startup-id diodon1
+# exec_always --no-startup-id diodon
 exec_always feh --bg-scale /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png
 
 # Use pactl to adjust volume in PulseAudio.
@@ -114,6 +114,10 @@ bindsym $mod+Shift+f exec $i3path/i3-finder
 #
 # Enable Print Screen
 bindsym --release Ctrl+Shift+5 exec shutter -s
+
+bindsym $mod+Shift+b exec $i3home/rofi/rofi-bluetooth/rofi-bluetooth
+bindsym $mod+Shift+n exec $i3home/rofi/networkmanager-dmenu/networkmanager_dmenu
+
 
 # change focus
 bindsym $mod+h focus left
