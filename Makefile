@@ -7,11 +7,14 @@ dependencies:
 permissions:
 	sudo chmod a+w /sys/class/backlight/intel_backlight/brightness
 
-dunst:
-	mkdir ~/.config/dunst
 
-dunstrc: dunst
-	ln -sf $(CURDIR)/dunst/dunstrc ~/.config/dunst/dunstrc
+CONFIG_HOME=${HOME}/.config
+
+${CONFIG_HOME}/dunst:
+	mkdir $@
+${CONFIG_HOME}/dunst/dunstrc: ${CONFIG_HOME}/dunst
+	ln -sf $(CURDIR)/dunst/dunstrc $@
+dunstrc: ${CONFIG_HOME}/dunst/dunstrc
 
 restart-dunst:
 	pkill dunst
@@ -20,11 +23,18 @@ try-dunst:
 	notify-send "A Test notification"
 
 
+configure: dunstrc
 
-${HOME}/.config/i3blocks: i3blocks/i3blocks-contrib
-	ln -sf $(CURDIR)/i3blocks/i3blocks-contrib ~/.config/i3blocks
-i3blocks/i3blocks-contrib:
-	git clone https://github.com/vivien/i3blocks-contrib i3blocks/i3blocks-contrib
-${HOME}/.config/i3blocks/config:
-	cp i3blocks/config ${HOME}/.config/i3blocks/config
+
+${CONFIG_HOME}/i3blocks:
+	mkdir $@
+${CONFIG_HOME}/i3blocks/config: ${CONFIG_HOME}/i3blocks
+	ln -sf $(CURDIR)/i3blocks/config $@
+i3blocks-config: ${CONFIG_HOME}/i3blocks/config
+
+${CONFIG_HOME}/rofi:
+	mkdir $@
+${CONFIG_HOME}/rofi/config.rasi:
+	(cd rofi/rofi && echo 1 | bash setup.sh)
+rofi-config: ${CONFIG_HOME}/rofi/config.rasi
 
