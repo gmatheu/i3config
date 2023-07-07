@@ -13,3 +13,4 @@ bindsym $mod+$i3-wm.binding.terminal exec i3-sensible-terminal
 bindsym $mod+d exec --no-startup-id $i3path/i3-launcher
 bindsym $mod+Shift+d exec --no-startup-id $i3path/i3-launcher window
 bindsym $mod+Shift+f exec $i3path/i3-finder
+bindsym $mod+Shift+semicolon exec $i3path/i3-mappings

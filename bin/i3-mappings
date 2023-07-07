@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mapping=$(grep -R ~/.config/i3 --no-filename -e 'bindsym' | grep -v -e '^#' | sed "s/\s*//" | cut -d " " -f 2- | rofi -threads 0 -width 100 -dmenu -i -p "Mappings")
+i3 $(echo "${mapping}" | cut -d ' ' -f 2-)
