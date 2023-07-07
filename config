@@ -87,8 +87,8 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 # # Sreen brightness controls
 # bindsym XF86MonBrightnessUp exec xrandr --output eDP-1 --brightness 0.8
 # bindsym XF86MonBrightnessDown exec xrandr --output eDP-1 --brightness 0.4
-bindsym XF86MonBrightnessUp exec light -A 10
-bindsym XF86MonBrightnessDown exec light -U 10
+bindsym XF86MonBrightnessUp exec light -A 2
+bindsym XF86MonBrightnessDown exec light -U 2
 
 bindsym XF86AudioPlay exec playerctl play
 bindsym XF86AudioPause exec playerctl pause
@@ -265,17 +265,29 @@ for_window [window_role="task_dialog"] floating enable
 # Check class by using xprop command
 assign [class="Firefox"] $ws2
 assign [class="Slack"] $ws3
-assign [class="Teams"] $ws3
+assign [class="Teams" title="Microsof Teams (?!Notification)"] $ws4
 assign [class="blueman"] $ws10
 assign [class="(?i)libreoffice"] $ws8
+assign [class="VirtualBox.*"] $ws8
+assign [instance="zoom"] $ws9
+assign [class="zoom"] $ws9
+assign [title="Zoom Meeting"] $ws9
 
 # Floating windows
+for_window [title="Microsoft Teams Notification"] floating enable sticky
 for_window [window_role="task_dialog|bubble|page-info|Preferences|pop-up"] floating enable
 for_window [window_role="Open Files"] floating enable sticky
 for_window [window_role="File Operation Progress"] floating enable sticky
 for_window [class="qBittorrent" window_role="pop-up"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
+
+for_window [class="i3-frame" instance="i3-frame"] move position center
+for_window [window_type="DIALOG"] move position center
+for_window [floating] move position center
+for_window [window_type="dialog"] move position center
+
+bindsym $mod+c move position center
 
 # Sticky window
 for_window [instance="file_progress"]  sticky enable

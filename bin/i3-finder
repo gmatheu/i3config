@@ -1,2 +1,5 @@
 #!/bin/bash
-xdg-open "$(locate -i $HOME | rofi -threads 0 -width 100 -dmenu -i -p "Find")"
+# xdg-open "$(locate -i $HOME | rofi -threads 0 -width 100 -dmenu -i -p "Find")"
+
+directory="$(find $HOME -maxdepth 1 -type d  | rofi -threads 0 -width 100 -dmenu -i -p "Find")"
+xdg-open "$(find $directory | rofi -threads 0 -width 100 -dmenu -i -p "Find")"

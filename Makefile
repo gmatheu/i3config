@@ -48,8 +48,10 @@ ${ROFI_HOME}/monitor-switcher.rasi:
 ${ROFI_HOME}/arc_dark_transparent_colors.rasi:
 	ln -sf $(CURDIR)/rofi/rofi-monitor-selector/rofi-theme/arc_dark_transparent_colors.rasi $@
 rofi-monitor-selector-config: ${ROFI_HOME}/monitor-switcher.rasi ${ROFI_HOME}/arc_dark_transparent_colors.rasi
+${ROFI_HOME}/theme.rasi:
+	ln -sf $(CURDIR)/rofi/rofi-monitor-selector/rofi-theme/arc_dark_transparent_colors.rasi $@
 
-rofi-config: ${ROFI_HOME}/config.rasi ${CONFIG_HOME}/networkmanager-dmenu/config.ini rofi-monitor-selector-config
+rofi-config: ${ROFI_HOME}/config.rasi ${ROFI_HOME}/theme.rasi ${CONFIG_HOME}/networkmanager-dmenu/config.ini rofi-monitor-selector-config
 
 
 configure: dunstrc rofi-config i3blocks-config

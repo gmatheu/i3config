@@ -30,3 +30,4 @@ bindsym $mod+Shift+b exec $i3home/rofi/rofi-bluetooth/rofi-bluetooth
 # set_from_resource $i3-wm.program.files i3-wm.program.files /usr/bin/nautilus --new-window
 # bindsym $mod+$i3-wm.binding.files exec --no-startup-id $i3-wm.program.files
 
+bindsym $mod+Shift+v exec $i3home/rofi-pactl/rofi-pactl.lua

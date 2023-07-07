@@ -5,11 +5,13 @@
 # Toggle bar visibility
 ## Modify // Toggle Bar // <> i ##
 set_from_resource $i3-wm.binding.bar_toggle i3-wm.binding.bar_toggle i
-bindsym $mod+$i3-wm.binding.bar_toggle bar mode toggle
+bindsym $mod+$i3-wm.binding.bar_toggle bar mode toggle bar-bottom
+set_from_resource $i3-wm.binding.top_bar_toggle i3-wm.binding.top_bar_toggle Shift+i
+bindsym $mod+$i3-wm.binding.top_bar_toggle bar mode toggle bar-top
 
 set_from_resource $i3-wm.bar.position i3-wm.bar.position bottom
 set_from_resource $i3-wm.bar.font gtk.monospace_font_name Hack, FontAwesome 12
-set_from_resource $i3-wm.bar.separatorchar i3-wm.bar.separatorchar " "
+set_from_resource $i3-wm.bar.separatorchar i3-wm.bar.separatorchar "|"
 set_from_resource $i3-wm.bar.trayoutput i3-wm.bar.trayoutput primary
 set_from_resource $i3-wm.bar.stripworkspacenumbers i3-wm.bar.stripworkspacenumbers no
 set_from_resource $i3-wm.bar.mode i3-wm.bar.mode dock
@@ -17,6 +19,7 @@ set_from_resource $i3-wm.bar.status_command i3-wm.bar.status_command i3blocks
 
 # Default bar configuration
 bar {
+  id bar-bottom
   position $i3-wm.bar.position
   mode $i3-wm.bar.mode
   font pango:$i3-wm.bar.font
@@ -24,6 +27,27 @@ bar {
   status_command $i3-wm.bar.status_command
   tray_output $i3-wm.bar.trayoutput
   strip_workspace_numbers $i3-wm.bar.stripworkspacenumbers
+
+    colors {
+        background #253941
+        statusline $offwhite
+        focused_workspace #fdf6e3 #6c71c4 $white
+        active_workspace #fdf6e3 #6c71c4 $white
+        inactive_workspace #002b36 #586e75 $white
+        urgent_workspace #d33682 #d33682 #fdf6e3
+
+        separator          $transparent
+  }
+}
+bar {
+  id bar-top
+  position top
+  mode hide
+  font pango:$i3-wm.bar.font
+  separator_symbol $i3-wm.bar.separatorchar
+  status_command i3status
+  tray_output none
+  workspace_buttons no
 
     colors {
         background #253941
