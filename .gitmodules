@@ -9,7 +9,7 @@
 	url = https://github.com/ClydeDroid/rofi-bluetooth
 [submodule "rofi/rofi-monitor-selector"]
 	path = rofi/rofi-monitor-selector
-	url = https://github.com/qboileau/rofi-monitor-selector.git
+	url = https://github.com/gmatheu/rofi-monitor-selector.git
 [submodule "i3blocks/i3blocks-contrib"]
 	path = i3blocks/i3blocks-contrib
 	url = https://github.com/vivien/i3blocks-contrib
