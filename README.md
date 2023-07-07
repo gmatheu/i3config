@@ -12,3 +12,10 @@
 ## References
 
 * ./bin/i3-get-window-criteria from https://github.com/mykolapolonskyi/i3.git
+
+
+## Other
+
+* https://github.com/Murzchnvok/rofi-collection.git
+* https://github.com/regolith-linux/remontoire
+
