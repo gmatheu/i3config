@@ -14,3 +14,4 @@ bindsym $mod+d exec --no-startup-id $i3path/i3-launcher
 bindsym $mod+Shift+d exec --no-startup-id $i3path/i3-launcher window
 bindsym $mod+Shift+f exec $i3path/i3-finder
 bindsym $mod+Shift+semicolon exec $i3path/i3-mappings
+bindsym $mod+Shift+z exec $i3path/i3-pass

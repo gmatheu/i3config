@@ -1,0 +1,4 @@
+#! /bin/bash
+
+password=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | rofi -threads 0 -width 100 -dmenu -i -p "Mappings")
+pass show "${password}" | xclip -selection clipboard
