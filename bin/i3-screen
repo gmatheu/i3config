@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-option=`echo -e "hdmi\nhdmioff" | rofi -width 500 -dmenu -p Screen:`
+option=$(echo -e "hdmi\nhdmioff" | rofi -width 500 -dmenu -p Screen:)
 
 # Case switch
 
