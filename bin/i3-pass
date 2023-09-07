@@ -1,21 +1,40 @@
 #! /bin/bash
 
-password=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | rofi -threads 0 -width 100 -kb-accept-custom '' -kb-accept-custom-alt '' -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' -dmenu -i -p "Password name")
+actions="passupdate: Pull from remote\npasspush: Push to remote\n"
+password_entries=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | xargs -I{} echo "{}\n")
+menu="${password_entries}\n${actions}"
+selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' | rofi -threads 0 -width 100 -kb-accept-custom '' -kb-accept-custom-alt '' -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' -dmenu -i -p "Password name")
 
 ret=$?
-case $ret in
-  0)
-    if pass show "${password}" | xclip -selection clipboard 
-    then
-      notify-send -u low -t 5000 "Pass" "Password copied to clipboard: \n\t${password}"
-    else
-      notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
-    fi
+
+action=$(echo ${selection} | cut -d ':' -f 1)
+case $action in
+  passupdate)
+    output=$(pass git pull)
+    notify-send -u low -t 5000 "Pass" "Pulling changes from remote\n${output}"
     ;;
-  10)
-    echo "No option chosen."
+  passpush)
+    output=$(pass git push)
+    notify-send -u low -t 5000 "Pass" "Pushing changes to remote\n${output}"
     ;;
-  11)
-    echo "No option chosen."
+  *):
+    password=${action}
+    case $ret in
+      0)
+        if pass show "${password}" | xclip -selection clipboard 
+        then
+          notify-send -u low -t 5000 "Pass" "Password copied to clipboard: \n\t${password}"
+        else
+          notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
+        fi
+        ;;
+      10)
+        echo "No option chosen."
+        ;;
+      11)
+        echo "No option chosen."
+        ;;
+    esac    
     ;;
 esac
+
