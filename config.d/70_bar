@@ -39,27 +39,27 @@ bar {
         separator          $transparent
   }
 }
-bar {
-  id bar-top
-  position top
-  mode hide
-  font pango:$i3-wm.bar.font
-  separator_symbol $i3-wm.bar.separatorchar
-  status_command i3status
-  tray_output none
-  workspace_buttons no
-
-    colors {
-        background #253941
-        statusline $offwhite
-        focused_workspace #fdf6e3 #6c71c4 $white
-        active_workspace #fdf6e3 #6c71c4 $white
-        inactive_workspace #002b36 #586e75 $white
-        urgent_workspace #d33682 #d33682 #fdf6e3
-
-        separator          $transparent
-  }
-}
+# bar {
+#   id bar-top
+#   position top
+#   mode hide
+#   font pango:$i3-wm.bar.font
+#   separator_symbol $i3-wm.bar.separatorchar
+#   status_command i3status
+#   tray_output none
+#   workspace_buttons no
+#
+#     colors {
+#         background #253941
+#         statusline $offwhite
+#         focused_workspace #fdf6e3 #6c71c4 $white
+#         active_workspace #fdf6e3 #6c71c4 $white
+#         inactive_workspace #002b36 #586e75 $white
+#         urgent_workspace #d33682 #d33682 #fdf6e3
+#
+#         separator          $transparent
+#   }
+# }
 
 # # i3xrocks config file. Override this for a custom status bar generator.
 # set_from_resource $i3-wm.bar.status_command i3-wm.bar.status_command i3xrocks -u ~/.config/regolith2/i3xrocks/conf.d -d /usr/share/i3xrocks/conf.d
