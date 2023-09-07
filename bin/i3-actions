@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-action=$(echo -e "swapcaps: Swap Caps Lock as Esc\nrestorecaps: Restore Caps Lock" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
+action=$(echo -e "swapcaps: Swap Caps Lock as Esc\nrestorecaps: Restore Caps Lock\nkbdlayoutintl: Keyboard layout AltGr Intl" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
 
 case $action in
     swapcaps)
@@ -11,4 +11,7 @@ case $action in
         setxkbmap -option caps:caps
         notify-send -u low -t 1000 "Actions" "Caps Lock restored"
         ;;
+    kbdlayoutintl)
+        setxkbmap -model pc105 -layout us -variant altgr-intl
+        notify-send -u low -t 1000 "Actions" "Set keyboard layout to US AltGr Intl"
 esac
