@@ -54,14 +54,19 @@ font pango:Hack, FontAwesome 12
 # Home for executable scripts
 set $i3home ~/.config/i3
 set $i3path ~/.config/i3/bin
-set $i3lockargs -i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png
+# set $i3lockargs -i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png
+set $i3lockargs -i /usr/share/backgrounds/warty-final-ubuntu.png
 set $i3lockwall i3lock --nofork $i3lockargs
-bindsym $mod+Ctrl+Shift+l exec --no-startup-id $i3lockwall
+# bindsym $mod+Ctrl+Shift+l exec --no-startup-id $i3lockwall
+bindsym $mod+Ctrl+Shift+l exec --no-startup-id i3lock --nofork $i3lockargs
+
+
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
 
 bindsym $mod+Shift+p exec $i3path/i3-logout "$i3lockargs"
-exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lockwall
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork $i3lockargs
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock-fancy
 exec_always --no-startup-id $i3path/i3-autolock "$i3lockargs"
 
 
