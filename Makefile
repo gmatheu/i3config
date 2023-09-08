@@ -20,7 +20,10 @@ restart-dunst:
 	pkill dunst
 
 try-dunst:
-	notify-send "A Test notification"
+	notify-send -u critical "Warning!" "A Test notification"
+	notify-send -u normal "Title" "A Test notification" 
+	notify-send -u low "Longer longer Title" "A Test notification" 
+	notify-send -u normal "No title"
 
 
 
