@@ -21,7 +21,7 @@ case $action in
     password=${action}
     case $ret in
       0)
-        if pass show "${password}" | xclip -selection clipboard 
+        if pass show "${password}" | head -n 1 | xclip -selection clipboard 
         then
           notify-send -u low -t 5000 "Pass" "Password copied to clipboard: \n\t${password}"
         else
