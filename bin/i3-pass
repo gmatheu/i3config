@@ -1,8 +1,11 @@
 #! /bin/bash
 
+PRIVATE_BROWSER="brave-browser --new-window"
+
+help="Enter to copy to clipboard / Shift+Enter to open url"
 actions="passupdate: Pull from remote\npasspush: Push to remote\n"
 password_entries=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | xargs -I{} echo "{}\n")
-menu="${password_entries}\n${actions}"
+menu="${help}${password_entries}\n${actions}"
 selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' | rofi -threads 0 -width 100 -kb-accept-custom '' -kb-accept-custom-alt '' -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' -dmenu -i -p "Password name")
 
 ret=$?
@@ -21,7 +24,7 @@ case $action in
     password=${action}
     case $ret in
       0)
-        if pass show "${password}" | head -n 1 | xclip -selection clipboard 
+        if pass show "${password}" | head -n 1 | xclip -selection clipboard
         then
           notify-send -u low -t 5000 "Pass" "Password copied to clipboard: \n\t${password}"
         else
@@ -29,12 +32,22 @@ case $action in
         fi
         ;;
       10)
-        echo "No option chosen."
+        if pass show "${password}" | head -n 1 | xclip -selection clipboard
+        then
+
+          if pass show "${password}" | grep -e 'url' | cut -d ':' -f 2- | xargs -I {} ${PRIVATE_BROWSER} {}
+          then
+            notify-send -u low -t 2000 "Pass" "Opening browser. Password copied to clipboard: \n\t${password}"
+          else
+            notify-send -u normal -t 5000 "Pass" "No url. Password copied to clipboard: \n\t${password}"
+          fi
+        else
+          notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
+        fi
         ;;
       11)
         echo "No option chosen."
         ;;
-    esac    
+    esac
     ;;
 esac
-
