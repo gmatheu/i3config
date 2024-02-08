@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
+
+EXTERNAL_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
+PRIMARY_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
 menu="swapcaps: Swap Caps Lock as Esc
 restorecaps: Restore Caps Lock
 kbdlayoutintl: Keyboard layout AltGr Intl
 notifyoff: Disable system notifications
 notifyon: Enable system notifications
 notifyhist: Pop notification from history
+i3-toexternal: Move current container to external output device (${EXTERNAL_DEVICE})
+i3-toprimary: Move current container to primary output device (${PRIMARY_DEVICE})
 "
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
 
@@ -31,5 +36,11 @@ case $action in
         ;;
     notifyhist)
         dunstctl history-pop
+        ;;
+    i3-toexternal)
+        i3-msg move workspace to output DP-1
+        ;;
+    i3-toprimary)
+        i3-msg move workspace to output primary
         ;;
 esac
