@@ -272,6 +272,7 @@ assign [class="Teams" title="Microsof Teams (?!Notification)"] $ws4
 assign [class="blueman"] $ws10
 assign [class="(?i)libreoffice"] $ws8
 assign [class="VirtualBox.*"] $ws8
+assign [instance="org.remmina.Remmina"] $ws8
 assign [instance="zoom"] $ws9
 assign [class="zoom"] $ws9
 assign [title="Zoom Meeting"] $ws9

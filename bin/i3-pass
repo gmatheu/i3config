@@ -35,7 +35,7 @@ case $action in
         if pass show "${password}" | head -n 1 | xclip -selection clipboard
         then
 
-          if pass show "${password}" | grep -e 'url' | cut -d ':' -f 2- | xargs -I {} ${PRIVATE_BROWSER} {}
+          if pass show "${password}" | grep -e 'url' | cut -d ':' -f 2- | xargs -I {} ${PRIVATE_BROWSER} {} &
           then
             notify-send -u low -t 2000 "Pass" "Opening browser. Password copied to clipboard: \n\t${password}"
           else
