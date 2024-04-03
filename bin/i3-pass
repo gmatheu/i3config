@@ -2,11 +2,15 @@
 
 PRIVATE_BROWSER="brave-browser --new-window"
 
-help="Enter to copy to clipboard / Ctrl+Enter to open url / Ctrl+Shift+enter to trigger RPA\n"
+help="Enter -> Clibpoard / Ctrl+Enter -> Open / Ctrl+Shift+enter -> RPA"
 actions="passupdate: Pull from remote\npasspush: Push to remote\n"
 password_entries=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | xargs -I{} echo "{}\n")
-menu="${help}${password_entries}\n${actions}"
-selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' | rofi -threads 0 -width 100 -kb-accept-custom '' -kb-accept-custom-alt '' -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' -dmenu -i -p "Password name")
+menu="${password_entries}\n${actions}"
+selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' |\
+  rofi -threads 0 -width 100 \
+    -kb-accept-custom '' -kb-accept-custom-alt '' \
+    -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' \
+    -dmenu -i -p "Password (${help}) ")
 
 ret=$?
 
@@ -46,7 +50,10 @@ case $action in
         fi
         ;;
       11)
-        echo "No option chosen."
+        notify-send -u low -t 2000 "Pass" "Triggering RPA: \n\t${password}"
+        RPA_HOME=$HOME/.config/i3/rpa
+        cd "$RPA_HOME" || notify-send -u critical -t 2000 "Pass" "Could not change directory to $RPA_HOME"
+        ./$(echo "${password}" | sed -e 's#/#_#').sh
         ;;
     esac
     ;;
