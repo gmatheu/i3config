@@ -4,9 +4,11 @@
 EXTERNAL_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
 PRIMARY_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
 
-BATTERY_NOTIFY_HOME=/home/gmatheu/.config/i3/battery-notify
+BATTERY_NOTIFY_HOME=${HOME}/.config/i3/battery-notify
 BATTERY_NOTIFY_PROCESS=battery-notify
 BATTERY_NOTIFY_PID=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+
+SERVICES_CMD="${HOME}/.i3/bin/i3-services"
 
 menu="swapcaps: Swap Caps Lock as Esc
 restorecaps: Restore Caps Lock
@@ -22,7 +24,10 @@ battery-notify-on: Activate or show current battery-notify process (pid:${BATTER
 battery-notify-off: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 battery-notify-status: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 settings-workspace: Creates settings workspace
+services-restart: Restart a system daemon
+services-status: Restart a system daemon
 "
+
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
 
 case $action in
@@ -88,5 +93,11 @@ logs:
 $(tail ${BATTERY_NOTIFY_HOME}/*.log)
 "
         action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
+        ;;
+    services-restart)
+        ${SERVICES_CMD} restart
+        ;;
+    services-status)
+        ${SERVICES_CMD} status
         ;;
 esac

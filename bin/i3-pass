@@ -2,7 +2,7 @@
 
 PRIVATE_BROWSER="brave-browser --new-window"
 
-help="Enter to copy to clipboard / Shift+Enter to open url"
+help="Enter to copy to clipboard / Ctrl+Enter to open url / Ctrl+Shift+enter to trigger RPA\n"
 actions="passupdate: Pull from remote\npasspush: Push to remote\n"
 password_entries=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | xargs -I{} echo "{}\n")
 menu="${help}${password_entries}\n${actions}"

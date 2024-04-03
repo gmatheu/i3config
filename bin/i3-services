@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+
+DEFAULT_ACTION=${1:-"status"}
+
+
+_status_service() {
+    _service=$1
+    status="$(systemctl status ${_service})"
+    echo -f "${status}" | rofi -width 160 -height 200 -dmenu \
+            -kb-accept-custom '' -kb-accept-custom-alt '' \
+            -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' \
+            -dmenu -i -p "Service (Enter -> Back / Shift+Enter -> Restart / Ctrl+Shift+Enter -> Stop)"
+    ret=$?
+    case $ret in
+      0)
+        _services_all
+        ;;
+      10)
+          _restart_service "${_service}"
+        ;;
+      11)
+        notify-send -u low -t 5000 "Service" "Not yet implemented"
+        ;;
+      1)
+        if [ ! "x${DEBUG}" == "x" ];
+        then
+              notify-send -u critical -t 5000 "Service" "Something went wrong :("
+        fi
+        ;;
+    esac
+}
+_restart_service() {
+    _service=$1
+    i3-sensible-terminal --title "Restarting Service: ${_service}" --command "echo Restarting service: ${_service};\\
+    sudo systemctl restart ${_service} && \\
+    notify-send -u normal -t 2000 'Service' 'Service restarted: ${_service}'
+    "
+}
+_services_all() {
+    menu="$(systemctl --type service --all --state active | tail -n +2 | tr -s ' '| cut -d ' ' -f 1-2 | column -t -s ' ')
+    "
+    selection=$(echo -e "$menu" |\
+        rofi -threads 1 -width 100 \
+            -kb-accept-custom '' -kb-accept-custom-alt '' \
+            -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' \
+            -dmenu -i -p "Service (Enter -> ${DEFAULT_ACTION} / Shift+Enter -> Restart / Ctrl+Shift+Enter -> Stop)")
+    ret=$?
+    service=$(echo "${selection}" | cut -d$'\t' -f 1)
+    if [ ! "x${DEBUG}" == "x" ];
+    then
+        notify-send -u low -t 5000 "Service" "Service: ${service} (ret=${ret})"
+    fi
+    case $ret in
+      0)
+        case $DEFAULT_ACTION in
+        status)
+          _status_service "${service}"
+        ;;
+        restart)
+          _restart_service "${service}"
+        ;;
+        *)
+        notify-send -u critical -t 5000 "Service" "Unkown action: ${DEFAULT_ACTION}"
+        ;;
+        esac
+        ;;
+      10)
+          _restart_service "${service}"
+        ;;
+      11)
+        notify-send -u low -t 5000 "Service" "Not yet implemented"
+        ;;
+      1)
+        if [ ! "x${DEBUG}" == "x" ];
+        then
+              notify-send -u critical -t 5000 "Service" "Something went wrong :("
+        fi
+        ;;
+    esac
+}
+
+_services_all
