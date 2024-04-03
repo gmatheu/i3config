@@ -172,11 +172,11 @@ set $ws4 "4:teams"
 set $ws5 "5"
 set $ws6 "6"
 set $ws7 "7"
-set $ws8 "8"
+set $ws8 "8:remote"
 set $ws9 "9"
 # U+1F529
-# set $ws10 "10:🔩"
-set $ws10 "10:settings"
+set $ws10 "10:🔩"
+# set $ws10 "10:settings"
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1

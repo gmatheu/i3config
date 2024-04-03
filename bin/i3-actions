@@ -3,6 +3,11 @@
 
 EXTERNAL_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
 PRIMARY_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
+
+BATTERY_NOTIFY_HOME=/home/gmatheu/.config/i3/battery-notify
+BATTERY_NOTIFY_PROCESS=battery-notify
+BATTERY_NOTIFY_PID=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+
 menu="swapcaps: Swap Caps Lock as Esc
 restorecaps: Restore Caps Lock
 kbdlayoutintl: Keyboard layout AltGr Intl
@@ -11,6 +16,12 @@ notifyon: Enable system notifications
 notifyhist: Pop notification from history
 i3-toexternal: Move current container to external output device (${EXTERNAL_DEVICE})
 i3-toprimary: Move current container to primary output device (${PRIMARY_DEVICE})
+i3-window-toexternal: Move current window to external output device (${EXTERNAL_DEVICE})
+i3-window-toprimary: Move current window to primary output device (${PRIMARY_DEVICE})
+battery-notify-on: Activate or show current battery-notify process (pid:${BATTERY_NOTIFY_PID})
+battery-notify-off: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
+battery-notify-status: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
+settings-workspace: Creates settings workspace
 "
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
 
@@ -38,9 +49,44 @@ case $action in
         dunstctl history-pop
         ;;
     i3-toexternal)
-        i3-msg move workspace to output DP-1
+        i3-msg move workspace to output ${EXTERNAL_DEVICE}
         ;;
     i3-toprimary)
         i3-msg move workspace to output primary
+        ;;
+    i3-window-toexternal)
+        i3-msg move window to output ${EXTERNAL_DEVICE}
+        ;;
+    i3-window-toprimary)
+        i3-msg move window to output primary
+        ;;
+    settings-workspace)
+        i3-msg workspace "10:🔩"
+        gtk-launch blueman-manager
+        gtk-launch pavucontrol
+        ;;
+    battery-notify-on)
+        pgrep ${BATTERY_NOTIFY_PROCESS}
+        pkill "${BATTERY_NOTIFY_PROCESS}"
+        cd ${BATTERY_NOTIFY_HOME} && ./battery-notify-watch.sh
+        pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+        notify-send -u normal -t 1000 "Actions" "battery-notify started (pid:$pid) "
+        ;;
+    battery-notify-off)
+        pkill "${BATTERY_NOTIFY_PROCESS}"
+        pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+        notify-send -u low -t 1000 "Actions" "battery-notify killed (pid:$pid) "
+        ;;
+    battery-notify-status)
+        pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+        running=$(pgrep ${BATTERY_NOTIFY_PROCESS} > /dev/null && echo "Running")
+        status="
+status: ${running}
+pid: ${pid}
+
+logs:
+$(tail ${BATTERY_NOTIFY_HOME}/*.log)
+"
+        action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
         ;;
 esac

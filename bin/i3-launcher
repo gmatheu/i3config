@@ -10,6 +10,6 @@ theme="style_7"
 dir="$HOME/.config/rofi/launchers/text"
 color="nordic.rasi"
 
-sed -i -e "s/@import .*/@import \"$color\"/g" $dir/styles/colors.rasi
+sed -i -e "s/@import .*/@import \"$color\"/g" "${dir}/styles/colors.rasi"
 
 i3-dmenu-desktop --dmenu "rofi -no-lazy-grab -show ${defult_show} -modi run,drun,window -theme $dir/\"$theme\""
