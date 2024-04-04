@@ -8,7 +8,7 @@ BATTERY_NOTIFY_HOME=${HOME}/.config/i3/battery-notify
 BATTERY_NOTIFY_PROCESS=battery-notify
 BATTERY_NOTIFY_PID=$(pgrep ${BATTERY_NOTIFY_PROCESS})
 
-SERVICES_CMD="${HOME}/.i3/bin/i3-services"
+SERVICES_CMD="${HOME}/.config/i3/bin/i3-services"
 
 menu="swapcaps: Swap Caps Lock as Esc
 restorecaps: Restore Caps Lock
