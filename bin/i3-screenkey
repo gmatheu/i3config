@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+SCREENKEY_PROCESS=screenkey
+SCREENKEY_PID=$(pgrep ${SCREENKEY_PROCESS})
+menu="default: default config
+bottom-primary: bottom config
+bottom-secondary: bottom config on secondary monitor
+top: bottom config
+stop: Kill current screenkey process (pid:${SCREENKEY_PID})
+"
+
+action=${1:-""}
+if [ "$action" == "" ]; then
+	action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Screenkey: | cut -d ':' -f 1)
+fi
+
+_show_screenkey() {
+	screen=$1
+	left=$2
+	top=-10
+	screenkey --scr "${screen}" -p fixed -g 60%x5%+"${left}"%${top}% --bg-color gray &
+}
+
+case $action in
+bottom-primary)
+	notify-send -u low -t 1000 "Screenkey" "Started: bottom primary"
+	_show_screenkey 0 35
+	;;
+bottom-secondary)
+	notify-send -u low -t 1000 "Screenkey" "Started: bottom secondary"
+	_show_screenkey 1 135
+	;;
+stop)
+	pkill "${SCREENKEY_PROCESS}"
+	notify-send -u low -t 1000 "Screenkey" "screenkey process killed (pid:${SCREENKEY_PID}) "
+	;;
+?)
+	notify-send -u critical -t 3000 "Screnkey" "Unkown action: ${action}"
+	;;
+esac
