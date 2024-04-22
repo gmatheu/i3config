@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 EXTERNAL_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
 PRIMARY_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
 
@@ -26,78 +25,95 @@ battery-notify-status: Kill current battery-notify process (pid:${BATTERY_NOTIFY
 settings-workspace: Creates settings workspace
 services-restart: Restart a system daemon
 services-status: Restart a system daemon
+quick-websearch: Search clipboard text into the default web browser
+blank-quick-websearch: Search a to-be-entered text into the default web browser
 "
 
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
 
 case $action in
-    swapcaps)
-        setxkbmap -option caps:escape
-        notify-send -u low -t 1000 "Actions" "Caps Lock as escape"
-        ;;
-    restorecaps)
-        setxkbmap -option caps:caps
-        notify-send -u low -t 1000 "Actions" "Caps Lock restored"
-        ;;
-    kbdlayoutintl)
-        setxkbmap -model pc105 -layout us -variant altgr-intl
-        notify-send -u low -t 1000 "Actions" "Set keyboard layout to US AltGr Intl"
-        ;;
-    notifyon)
-        dunstctl set-paused false
-        notify-send -u low -t 1000 "Actions" "Notifications enabled"
-        ;;
-    notifyoff)
-        dunstctl set-paused true
-        ;;
-    notifyhist)
-        dunstctl history-pop
-        ;;
-    i3-toexternal)
-        i3-msg move workspace to output ${EXTERNAL_DEVICE}
-        ;;
-    i3-toprimary)
-        i3-msg move workspace to output primary
-        ;;
-    i3-window-toexternal)
-        i3-msg move window to output ${EXTERNAL_DEVICE}
-        ;;
-    i3-window-toprimary)
-        i3-msg move window to output primary
-        ;;
-    settings-workspace)
-        i3-msg workspace "10:🔩"
-        gtk-launch blueman-manager
-        gtk-launch pavucontrol
-        ;;
-    battery-notify-on)
-        pgrep ${BATTERY_NOTIFY_PROCESS}
-        pkill "${BATTERY_NOTIFY_PROCESS}"
-        cd ${BATTERY_NOTIFY_HOME} && ./battery-notify-watch.sh
-        pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
-        notify-send -u normal -t 1000 "Actions" "battery-notify started (pid:$pid) "
-        ;;
-    battery-notify-off)
-        pkill "${BATTERY_NOTIFY_PROCESS}"
-        pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
-        notify-send -u low -t 1000 "Actions" "battery-notify killed (pid:$pid) "
-        ;;
-    battery-notify-status)
-        pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
-        running=$(pgrep ${BATTERY_NOTIFY_PROCESS} > /dev/null && echo "Running")
-        status="
+swapcaps)
+	setxkbmap -option caps:escape
+	notify-send -u low -t 1000 "Actions" "Caps Lock as escape"
+	;;
+restorecaps)
+	setxkbmap -option caps:caps
+	notify-send -u low -t 1000 "Actions" "Caps Lock restored"
+	;;
+kbdlayoutintl)
+	setxkbmap -model pc105 -layout us -variant altgr-intl
+	notify-send -u low -t 1000 "Actions" "Set keyboard layout to US AltGr Intl"
+	;;
+notifyon)
+	dunstctl set-paused false
+	notify-send -u low -t 1000 "Actions" "Notifications enabled"
+	;;
+notifyoff)
+	dunstctl set-paused true
+	;;
+notifyhist)
+	dunstctl history-pop
+	;;
+i3-toexternal)
+	i3-msg move workspace to output "${EXTERNAL_DEVICE}"
+	;;
+i3-toprimary)
+	i3-msg move workspace to output primary
+	;;
+i3-window-toexternal)
+	i3-msg move window to output "${EXTERNAL_DEVICE}"
+	;;
+i3-window-toprimary)
+	i3-msg move window to output primary
+	;;
+settings-workspace)
+	i3-msg workspace "10:🔩"
+	gtk-launch blueman-manager
+	gtk-launch pavucontrol
+	;;
+battery-notify-on)
+	pgrep ${BATTERY_NOTIFY_PROCESS}
+	pkill "${BATTERY_NOTIFY_PROCESS}"
+	cd ${BATTERY_NOTIFY_HOME} && ./battery-notify-watch.sh
+	pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+	notify-send -u normal -t 1000 "Actions" "battery-notify started \(pid:$pid\) "
+	;;
+battery-notify-off)
+	pkill "${BATTERY_NOTIFY_PROCESS}"
+	pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+	notify-send -u low -t 1000 "Actions" "battery-notify killed \(pid:$pid\) "
+	;;
+battery-notify-status)
+	pid=$(pgrep ${BATTERY_NOTIFY_PROCESS})
+	running=$(pgrep ${BATTERY_NOTIFY_PROCESS} >/dev/null && echo "Running")
+	status="
 status: ${running}
 pid: ${pid}
 
 logs:
 $(tail ${BATTERY_NOTIFY_HOME}/*.log)
 "
-        action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
-        ;;
-    services-restart)
-        ${SERVICES_CMD} restart
-        ;;
-    services-status)
-        ${SERVICES_CMD} status
-        ;;
+	action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
+	;;
+services-restart)
+	${SERVICES_CMD} restart
+	;;
+services-status)
+	${SERVICES_CMD} status
+	;;
+quick-websearch)
+	clipboard=$(xclip -o -selection clipboard | head -n 1)
+	term=$(rofi -dmenu -p "Web Search > " -filter "${clipboard}" -theme-str 'listview { enabled: false;}')
+	if [ "$term" != "" ]; then
+		notify-send -u normal -t 3000 "Actions: Quick Web Search" "Searching: ${term}"
+		xdg-open "https://www.duckduckgo.com?q=${term}" &
+	fi
+	;;
+blank-quick-websearch)
+	term=$(rofi -dmenu -p "Web Search > " -theme-str 'listview { enabled: false;}')
+	if [ "$term" != "" ]; then
+		notify-send -u normal -t 3000 "Actions: Quick Web Search" "Searching: ${term}"
+		xdg-open "https://www.duckduckgo.com?q=${term}" &
+	fi
+	;;
 esac

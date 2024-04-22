@@ -46,8 +46,8 @@ _services_all() {
             -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' \
             -dmenu -i -p "Service (Enter -> ${DEFAULT_ACTION} / Ctrl+Enter -> Restart / Ctrl+Shift+Enter -> Stop)")
     ret=$?
-    service=$(echo "${selection}" | cut -d$'\t' -f 2)
-    if [ ! "x${DEBUG}" == "x" ];
+    service=$(echo "${selection}" | cut -d$'\t' -f 2 | cut -d ' ' -f 1)
+    if [ ! "${DEBUG}" == "" ];
     then
         notify-send -u low -t 5000 "Service" "Service: ${service} (ret=${ret})"
     fi
@@ -72,7 +72,7 @@ _services_all() {
         notify-send -u low -t 5000 "Service" "Not yet implemented"
         ;;
       1)
-        if [ ! "x${DEBUG}" == "x" ];
+        if [ ! "${DEBUG}" == "" ];
         then
               notify-send -u critical -t 5000 "Service" "Something went wrong :("
         fi
