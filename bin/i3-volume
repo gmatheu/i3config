@@ -1,0 +1,16 @@
+#! /bin/bash
+
+notify_volume() {
+	local value=$(pactl list sinks | grep 'Volume: front-left' | awk '{print $5}')
+	local muted=$(pactl list sinks | grep 'Mute' | awk '{print $2}')
+	local text="Volume: ${value} (muted:${muted})"
+
+	expires="1500"
+	if $opt_use_dunstify; then
+		dunstify -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:volume "$text" -r 1000
+	else
+		notify-send -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:volume "$text"
+	fi
+}
+
+notify_volume
