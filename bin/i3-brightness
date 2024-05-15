@@ -1,0 +1,18 @@
+#! /bin/bash
+
+
+notify_backlight() {
+    local value=$(light)
+    local text="Brightness ${value}%"
+
+    expires="1500"
+    if $opt_use_dunstify; then
+        dunstify -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:brightness "$text" -r 1000
+    else
+        notify-send -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:brightness "$text"
+    fi
+}
+
+
+light $@
+notify_backlight
