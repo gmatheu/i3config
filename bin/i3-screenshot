@@ -8,9 +8,10 @@ capture_screenshot() {
 		exit 1
 	fi
 	if [[ "$flameshot_output" =~ 'save' ]]; then
-		file=$(echo "$flameshot_output" | cut -d ' ' -f 6)
+		file=$(echo "$flameshot_output" | grep 'save' | cut -d ' ' -f 6)
 
-		message="Screenshot saved to: $file"
+		message="""Screenshot saved to:
+$file"""
 
 		local icon="notification-display-brightness"
 		action=$(dunstify -i "$icon" --action="open, Open image" -h string:synchronous:flameshot "Screenshot" "$message")
