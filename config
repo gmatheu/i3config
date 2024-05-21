@@ -85,10 +85,10 @@ exec_always feh --bg-scale /usr/share/backgrounds/ubuntu-default-greyscale-wallp
 floating_modifier $mod
 
 # Enable Print Screen
-bindsym --release Ctrl+Shift+4 exec flameshot launcher
-bindsym --release Ctrl+Shift+5 exec flameshot gui
-bindsym --release Ctrl+Shift+6 exec flameshot screen
-bindsym --release Ctrl+Shift+7 exec flameshot full
+bindsym --release Ctrl+Shift+4 exec $i3path/i3-screenshot launcher
+bindsym --release Ctrl+Shift+5 exec $i3path/i3-screenshot gui
+bindsym --release Ctrl+Shift+6 exec $i3path/i3-screenshot creen
+bindsym --release Ctrl+Shift+7 exec $i3path/i3-screenshot ull
 
 
 # change focus

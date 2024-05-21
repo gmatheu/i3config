@@ -1,0 +1,38 @@
+#! /bin/bash
+
+capture_screenshot() {
+	local flameshot_output=$(flameshot $@ 2>&1)
+	local icon="camera-photo"
+	if [[ "$flameshot_output" =~ 'aborted' ]]; then
+		dunstify -i "$icon" -h string:synchronous:flameshot "Screenshot" "Screenshot aborted"
+		exit 1
+	fi
+	if [[ "$flameshot_output" =~ 'save' ]]; then
+		file=$(echo "$flameshot_output" | cut -d ' ' -f 6)
+
+		message="Screenshot saved to: $file"
+
+		local icon="notification-display-brightness"
+		action=$(dunstify -i "$icon" --action="open, Open image" -h string:synchronous:flameshot "Screenshot" "$message")
+
+		open_action() {
+			xdg-open "${file}"
+		}
+		handle_dismiss() {
+			echo "dismissed"
+		}
+
+		case "$action" in
+		"open")
+			open_action
+			;;
+		"2")
+			handle_dismiss
+			;;
+		esac
+	else
+		echo "$flameshot_output"
+	fi
+}
+
+capture_screenshot $@
