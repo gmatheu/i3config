@@ -19,12 +19,23 @@ restart-dunst:
 
 try-dunst:
 	notify-send -u critical "Warning!" "A Test notification"
-	notify-send -u normal "Title" "A Test notification" 
-	notify-send -u low "Longer longer Title" "A Test notification" 
+	notify-send -u normal "Title" "A Test notification"
+	notify-send -u low "Longer longer Title" "A Test notification"
 	notify-send -u normal "No title"
+	notify-send --icon=audio-speakers "Bluetooth Speaker" "Battery < 20%"
+	dunstify  --hints=int:value:"50%" "SmartTech101" "Progressbar"
 
+try-dunst-tabulated:
+	notify-send "Memory Consumption (%):" "$$(ps axch -o cmd:15,%mem --sort=-%mem | head -n 30)"
 
+try-dunst-action:
+	dunstify --action="open_image,Open the image." --action="open,Open the directory." --action="delete,Delete it." --action="edit,Gimp it" -i "$filename" "Screenshot" "Saved & Copied."
 
+try-dunst-progress-bar:
+	dunstify --hints=int:value:"50%" "SmartTech101" "Progressbar"
+
+find-icons:
+	find /usr/share/icons/Papirus/48x48 -type f | fzf
 
 ${CONFIG_HOME}/i3blocks:
 	mkdir $@

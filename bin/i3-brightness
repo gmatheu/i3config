@@ -1,18 +1,30 @@
 #! /bin/bash
 
-
 notify_backlight() {
-    local value=$(light)
-    local text="Brightness ${value}%"
+	local value=$(light)
+	local text="Brightness ${value}%"
+	local icon="notification-display-brightness"
 
-    expires="1500"
-    if $opt_use_dunstify; then
-        dunstify -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:brightness "$text" -r 1000
-    else
-        notify-send -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:brightness "$text"
-    fi
+	filled="#"
+	empty="-"
+	width=40
+	filled_width=$(echo "($value*$width)/100" | bc)
+	empty_width=$(echo "$width-$filled_width" | bc)
+	bar=$(printf "%-${filled_width}s" | tr ' ' "$filled")
+	bar+="$(printf "%-${empty_width}s" | tr ' ' "$empty")"
+
+	message="${text}
+ ${bar}
+	"
+
+	expires="1500"
+	opt_use_dunstify=true
+	if $opt_use_dunstify; then
+		dunstify -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:brightness "Brightness" "$message" -r 1000
+	else
+		notify-send -i "$icon" -t $expires -h int:value:"$value" -h string:synchronous:brightness "Brightness" "$message"
+	fi
 }
-
 
 light $@
 notify_backlight
