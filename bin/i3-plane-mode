@@ -1,0 +1,17 @@
+#! /bin/bash
+
+toggle_airplane_mode() {
+	local wifi_output=$(wifi)
+	local icon="airplane-mode"
+	if [[ "$wifi_output" =~ 'on' ]]; then
+		wifi off
+		bluetooth off
+		dunstify -i "$icon" -h string:synchronous:airplane "Airplane mode" "Wifi and bluetooth disabled"
+	else
+		dunstify -i "$icon" -h string:synchronous:airplane "Airplane mode" "Wifi and bluetooth enabled"
+		bluetooth on
+		wifi on
+	fi
+}
+
+toggle_airplane_mode

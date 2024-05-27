@@ -1,10 +1,10 @@
 #! /bin/bash
 
 notify_volume() {
-	all_volumes=$(pactl --format json list sinks | sed -e 's/0,00/0.00/g' | jq -r '.[] | "\(.description),\( .volume | to_entries[0].value.value_percent),\( .mute ),\( .name )"')
-	default_sink=$(pactl get-default-sink)
+	all_volumes=$(pactl --format json list sources | sed -e 's/0,00/0.00/g' | jq -r '.[] | select (.active_port != null) | "\(.description),\( .volume | to_entries[0].value.value_percent),\( .mute ),\( .name )"')
+	default_source=$(pactl get-default-source)
 
-	local icon="notification-audio-volume-high"
+	local icon="audio-input-microphone"
 	local message=""
 	while IFS= read -r volume; do
 		local description
@@ -17,10 +17,10 @@ notify_volume() {
 		name=$(echo "$volume" | cut -d, -f 4)
 		local default
 		default=""
-		if [ "${name}" = "${default_sink}" ]; then
+		if [ "${name}" = "${default_source}" ]; then
 			default="(*) "
 			if [ "${muted}" = "true" ]; then
-				icon="notification-audio-volume-muted"
+				icon="notification-microphone-sensitivity-muted"
 			fi
 		fi
 

@@ -47,10 +47,13 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 bindsym XF86MonBrightnessUp exec $i3path/i3-brightness -A 2
 bindsym XF86MonBrightnessDown exec $i3path/i3-brightness -U 2
 
-bindsym XF86AudioPlay exec playerctl play
-bindsym XF86AudioPause exec playerctl pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
+# bindsym XF86Display exec $i3path/i3-
+bindsym XF86Airplane exec $i3path/i3-plane-mode
+
+bindsym XF86AudioPrev exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $i3path/i3-input-volume && $refresh_i3status
+bindsym XF86AudioPlay exec --no-startup-id pactl set-source-volume @DEFAULT_SOURCE@ -10% && $i3path/i3-input-volume && $refresh_i3status
+bindsym XF86AudioPause exec --no-startup-id pactl set-source-volume @DEFAULT_SOURCE@ -10% && $i3path/i3-input-volume && $refresh_i3status
+bindsym XF86AudioNext exec --no-startup-id pactl set-source-volume @DEFAULT_SOURCE@ +10% && $i3path/i3-input-volume && $refresh_i3status
 
 
 # Dunst / dunstify / notifications
