@@ -6,4 +6,9 @@ TRACKPAD_ID=$(xinput list | grep Touchpad | grep -oP 'id=(\w*)' | cut -d = -f 2)
 ENABLE_TAP_ENABLED=$(xinput list-props $TRACKPAD_ID | grep 'Tapping Enabled (' | grep -oP '\(.*\)' | tr -d '()')
 xinput set-prop $TRACKPAD_ID $ENABLE_TAP_ENABLED 1
 
+# Setting keyboard layout with proper spanish key combinations
+setxkbmap -model pc105 -layout us -variant altgr-intl
 
+# Remap keys
+# Capslock -> Escape
+xmodmap -e "keycode 66 = Escape NoSymbol Escape"
