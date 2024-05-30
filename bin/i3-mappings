@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # TODO: Check https://github.com/regolith-linux/remontoire
-mapping=$(grep -R ~/.config/i3 --no-filename -e 'bindsym' | grep -v -e '^#' | sed "s/\s*//" | cut -d " " -f 2- | rofi -threads 0 -width 100 -dmenu -i -p "Mappings")
+mapping=$(i3-msg -t get_config | grep bindsym | grep -v -e '^#' | sed "s/\s*//" | cut -d " " -f 2- | rofi -threads 0 -width 100 -dmenu -i -p "Mappings")
 i3 $(echo "${mapping}" | cut -d ' ' -f 2-)
