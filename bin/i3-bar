@@ -1,0 +1,11 @@
+#! /bin/bash
+pkill polybar
+while pgrep -x polybar >/dev/null; do sleep 1; done
+
+MONITOR=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
+EXTERNAL_MONITOR=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
+
+polybar main &
+if [[ "$EXTERNAL_MONITOR" != "" ]]; then
+	polybar external &
+fi
