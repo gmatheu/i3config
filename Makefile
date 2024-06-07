@@ -23,6 +23,8 @@ try-dunst:
 	notify-send -u low "Longer longer Title" "A Test notification"
 	notify-send -u normal "No title"
 	notify-send --icon=audio-speakers "Bluetooth Speaker" "Battery < 20%"
+	notify-send --icon=notification-audio-volume-off "Volume icon" "Battery < 20%"
+	notify-send --icon=audio-speaker-testing "Other Volume icon" "Other icon"
 	dunstify  --hints=int:value:"50%" "SmartTech101" "Progressbar"
 
 try-dunst-tabulated:
@@ -37,11 +39,33 @@ try-dunst-progress-bar:
 find-icons:
 	find /usr/share/icons/Papirus/48x48 -type f | fzf
 
+find-fonts:
+	fc-list | fzf
+
+FiraCode.tar.xz:
+	wget -nc https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraCode.tar.xz
+
+patch-fonts: FiraCode.tar.xz
+	tar -xf FiraCode.tar.xz -C ~/.local/share/fonts
+	fc-cache -fv
+
 ${CONFIG_HOME}/i3blocks:
 	mkdir $@
 ${CONFIG_HOME}/i3blocks/config: ${CONFIG_HOME}/i3blocks
 	ln -sf $(CURDIR)/i3blocks/config $@
 i3blocks-config: ${CONFIG_HOME}/i3blocks/config
+
+${CONFIG_HOME}/polybar:
+	mkdir $@
+${CONFIG_HOME}/polybar/config.ini: ${CONFIG_HOME}/polybar
+	ln -sf $(CURDIR)/polybar/config.ini $@
+polybar-config: ${CONFIG_HOME}/polybar/config.ini
+
+${CONFIG_HOME}/kitty:
+	mkdir $@
+${CONFIG_HOME}/kitty/kitty.conf: ${CONFIG_HOME}/kitty
+	ln -sf $(CURDIR)/kitty/kitty.conf $@
+kitty-config: ${CONFIG_HOME}/kitty/kitty.conf
 
 ROFI_HOME=${CONFIG_HOME}/rofi
 ${ROFI_HOME}:
