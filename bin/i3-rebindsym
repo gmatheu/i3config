@@ -1,0 +1,9 @@
+#! /bin/bash
+
+echo "[$(date -Iseconds)][debug][$*]" >>"$HOME/.keymap-stats.i3.log"
+key=$1
+shift
+msg=$*
+
+echo "[$(date -Iseconds)][key:${key}][$msg]" >>"$HOME/.keymap-stats.i3.log"
+i3-msg "$msg" >/dev/null

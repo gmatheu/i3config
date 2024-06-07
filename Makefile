@@ -91,3 +91,23 @@ rofi-config: ${ROFI_HOME}/config.rasi ${ROFI_HOME}/theme.rasi ${CONFIG_HOME}/net
 
 
 configure: dunstrc rofi-config i3blocks-config
+
+HOME_DIR=${HOME}
+NAME=keymap-stats.i3
+LOG_FILE=${HOME_DIR}/.${NAME}.log
+
+show-log:
+	tail -n 50 ${LOG_FILE}
+follow-log:
+	tail -f -n 50 ${LOG_FILE}
+show-stats:
+	cat ${LOG_FILE} |\
+		grep -v init |\
+		grep -v debug |\
+		sed -e 's/\]\[/,/g' -e 's/\[//' -e 's/\]//' |\
+		cut -d ',' -f 2- |\
+		sed -e 's/key://' |\
+		awk -F, '{print $$1 " "  $$2}' |\
+		sort |\
+		uniq -c |\
+		sort -h -r

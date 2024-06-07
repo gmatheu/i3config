@@ -21,6 +21,7 @@ i3-toexternal: Move current container to external output device (${EXTERNAL_DEVI
 i3-toprimary: Move current container to primary output device (${PRIMARY_DEVICE})
 i3-window-toexternal: Move current window to external output device (${EXTERNAL_DEVICE})
 i3-window-toprimary: Move current window to primary output device (${PRIMARY_DEVICE})
+i3-window-toparent: Move currenet window to parent (${PRIMARY_DEVICE})
 battery-notify-on: Activate or show current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 battery-notify-off: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 battery-notify-status: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
@@ -71,6 +72,9 @@ i3-window-toexternal)
 	;;
 i3-window-toprimary)
 	i3-msg move window to output primary
+	;;
+i3-window-toparent)
+	i3-msg move window to parent
 	;;
 settings-workspace)
 	i3-msg workspace "10:🔩"
