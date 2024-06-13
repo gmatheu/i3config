@@ -3,6 +3,7 @@
 SCREENKEY_PROCESS=screenkey
 SCREENKEY_PID=$(pgrep ${SCREENKEY_PROCESS})
 menu="default: default config
+selection: On selection
 bottom-primary: bottom config
 bottom-secondary: bottom config on secondary monitor
 top: bottom config
@@ -22,6 +23,10 @@ _show_screenkey() {
 }
 
 case $action in
+selection)
+	notify-send -u low -t 1000 "Screenkey" "Started: Select where to start"
+	screenkey -p fixed -g "$(slop -n -f '%g')" --bg-color gray
+	;;
 bottom-primary)
 	notify-send -u low -t 1000 "Screenkey" "Started: bottom primary"
 	_show_screenkey 0 35

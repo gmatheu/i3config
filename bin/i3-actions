@@ -30,9 +30,10 @@ services-restart: Restart a system daemon
 services-status: Restart a system daemon
 quick-websearch: Search clipboard text into the default web browser
 blank-quick-websearch: Search a to-be-entered text into the default web browser
+screenkey-selection: Select where to open screenkey
 screenkey-bottom: Open screenkey at the bottom location
 screenkey-bottom-primary: Open screenkey at the bottom location
-screenkey: Open screenkey at the bottom location
+screenkey: Open screenkey menu
 screenkey-off: Closes any screenkey instance
 "
 
@@ -105,11 +106,11 @@ $(tail ${BATTERY_NOTIFY_HOME}/*.log)
 "
 	action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
 	;;
-services-restart)
-	${SERVICES_CMD} restart
-	;;
 services-status)
 	${SERVICES_CMD} status
+	;;
+screenkey-selection)
+	${SCREENKEY_CMD} selection
 	;;
 screenkey-bottom)
 	${SCREENKEY_CMD} bottom-secondary
