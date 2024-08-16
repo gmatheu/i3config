@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+X11VNC_PROCESS=x11vnc
+X11VNC_PID=$(pgrep ${X11VNC_PROCESS})
+VNCVIEWER_PROCESS=vncviewer
+VNCVIEWER_PID=$(pgrep ${VNCVIEWER_PROCESS})
+EVDI_STATUS=$(modprobe evdi 2>/dev/null && echo "evdi loaded" || echo "evdi not loaded")
+VIRTUAL_MONITOR_ID=DVI-I-1-1
+VNC_PORT=5900
+
+menu="enable: creates virtual monitor and vnc server (pid:${X11VNC_PID}, ${EVDI_STATUS})
+start-client: creates vnc client for virtual monitor
+disable: removes created virtual monitors
+stop-client: stop vnc client for virtual monitor (pid:${VNCVIEWER_PID})
+status:
+	$(xrandr --listactivemonitors | grep ${VIRTUAL_MONITOR_ID})
+	${EVDI_STATUS}
+	x11vnc pid: ${X11VNC_PID}
+	vncviewer pid: ${VNCVIEWER_PID}
+"
+
+action=${1:-""}
+if [ "$action" == "" ]; then
+	action=$(echo -e "$menu" | rofi -width 500 -dmenu -p 'Virtual Monitor' | cut -d ':' -f 1)
+fi
+
+case $action in
+enable)
+	# notify-send -u low -t 1000 "Virtual Monitor" "Started: Select where to start"
+	i3-sensible-terminal --title "Enabling evdi driver" --command "echo Enabling evdi driver; sudo modprobe evdi initial_device_count=1;"
+	xrandr --output ${VIRTUAL_MONITOR_ID} --mode 1280x720 --below eDP-1
+	x11vnc -display "$DISPLAY" -bg -forever -nopw -quiet -listen localhost -xkb -clip 1280x720+0+1504 &
+	;;
+start-client)
+	# notify-send -u low -t 1000 "Screenkey" "Started: bottom primary"
+	vncviewer -ViewOnly localhost:${VNC_PORT} &
+	;;
+stop-client)
+	# notify-send -u low -t 1000 "Screenkey" "Started: bottom primary"
+	kill "${VNCVIEWER_PID}"
+	;;
+disable)
+	# notify-send -u low -t 1000 "Screenkey" "Started: bottom secondary"
+	kill "${VNCVIEWER_PID}"
+	kill "${X11VNC_PID}"
+	xrandr --output ${VIRTUAL_MONITOR_ID} --off
+	i3-sensible-terminal --title "Disabling evdi driver" --command "echo Disabling evdi driver; sudo modprobe -r evdi;"
+	;;
+?)
+	notify-send -u critical -t 3000 "Screnkey" "Unkown action: ${action}"
+	;;
+esac

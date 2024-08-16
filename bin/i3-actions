@@ -10,6 +10,7 @@ BATTERY_NOTIFY_PID=$(pgrep ${BATTERY_NOTIFY_PROCESS})
 I3_BIN="${HOME}/.config/i3/bin"
 SERVICES_CMD="${I3_BIN}/i3-services"
 SCREENKEY_CMD="${I3_BIN}/i3-screenkey"
+VIRTUAL_MONITORS_CMD="${I3_BIN}/i3-virtual-monitor"
 
 menu="swapcaps: Swap Caps Lock as Esc
 restorecaps: Restore Caps Lock
@@ -35,6 +36,7 @@ screenkey-bottom: Open screenkey at the bottom location
 screenkey-bottom-primary: Open screenkey at the bottom location
 screenkey: Open screenkey menu
 screenkey-off: Closes any screenkey instance
+virtual-monitors: Open virtual monitor menu
 "
 
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
@@ -106,6 +108,9 @@ $(tail ${BATTERY_NOTIFY_HOME}/*.log)
 "
 	action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
 	;;
+services-restart)
+	${SERVICES_CMD} restart
+	;;
 services-status)
 	${SERVICES_CMD} status
 	;;
@@ -123,6 +128,9 @@ screenkey)
 	;;
 screenkey-off)
 	${SCREENKEY_CMD} stop
+	;;
+virtual-monitors)
+	${VIRTUAL_MONITORS_CMD}
 	;;
 quick-websearch)
 	clipboard=$(xclip -o -selection clipboard | head -n 1)
