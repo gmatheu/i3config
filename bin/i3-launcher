@@ -4,12 +4,16 @@
 # i3-dmenu-desktop --dmenu="rofi -modi drun,run -show drun"
 
 # From: rofi/rofi/1080p/bin/launcher_text
-defult_show=${1:-drun}
+default_show=${1:-ulauncher}
 theme="style_7"
 
-dir="$HOME/.config/rofi/launchers/text"
-color="nordic.rasi"
+if [ "$default_show" == "ulauncher" ]; then
+  ulauncher-toggle
+else
+  dir="$HOME/.config/rofi/launchers/text"
+  color="nordic.rasi"
 
-sed -i -e "s/@import .*/@import \"$color\"/g" "${dir}/styles/colors.rasi"
+  sed -i -e "s/@import .*/@import \"$color\"/g" "${dir}/styles/colors.rasi"
 
-i3-dmenu-desktop --dmenu "rofi -no-lazy-grab -show ${defult_show} -modi run,drun,window -theme $dir/\"$theme\""
+  i3-dmenu-desktop --dmenu "rofi -no-lazy-grab -show ${default_show} -modi run,drun,window -theme $dir/\"$theme\""
+fi
