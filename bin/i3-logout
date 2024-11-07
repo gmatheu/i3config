@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 LOCKWALL=${@:--i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png}
+/usr/share/backgrounds/little_numbat_boy_by_azskalt.png
 option=$(echo -e "suspend\nlock\nlogout\nhibernate\nreboot\npoweroff\nKill user $USER" | rofi -width 600 -dmenu -p system:)
 function lock {
 	i3lock ${LOCKWALL}
 }
+
+BIN_DIR=$(dirname "$(readlink -f "$0")")
 case $option in
 suspend)
+	"$BIN_DIR"/i3-battery-monitor skip
 	lock && /usr/bin/systemctl suspend
 	;;
 'lock')
@@ -15,6 +19,7 @@ logout)
 	i3-nagbar -t warning -m 'Are you sure you  want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'
 	;;
 hibernate)
+	"$BIN_DIR"/i3-battery-monitor skip
 	lock && sudo /usr/bin/systemctl hibernate
 	;;
 reboot)
@@ -23,7 +28,7 @@ reboot)
 poweroff)
 	/usr/bin/systemctl poweroff
 	;;
-'kill user $USER')
-	loginctl kill-user $USER
+"kill user $USER")
+	loginctl kill-user "$USER"
 	;;
 esac
