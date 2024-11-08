@@ -61,6 +61,9 @@ ${CONFIG_HOME}/polybar/config.ini: ${CONFIG_HOME}/polybar
 	ln -sf $(CURDIR)/polybar/config.ini $@
 polybar-config: ${CONFIG_HOME}/polybar/config.ini
 
+polybar-test-main:
+	polybar -c polybar/config.ini main
+
 ${CONFIG_HOME}/kitty:
 	mkdir $@
 ${CONFIG_HOME}/kitty/kitty.conf: ${CONFIG_HOME}/kitty
