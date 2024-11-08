@@ -80,7 +80,7 @@ i3-window-toparent)
 	i3-msg move window to parent
 	;;
 settings-workspace)
-	i3-msg workspace "10:🔩"
+	i3-msg workspace "10:etc"
 	gtk-launch blueman-manager
 	gtk-launch pavucontrol
 	;;
