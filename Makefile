@@ -64,6 +64,10 @@ polybar-config: ${CONFIG_HOME}/polybar/config.ini
 polybar-test-main:
 	polybar -c polybar/config.ini main
 
+EXTERNAL_MONITOR=DP-1
+polybar-test-external:
+	EXTERNAL_MONITOR=${EXTERNAL_MONITOR} polybar -c polybar/config.ini external
+
 ${CONFIG_HOME}/kitty:
 	mkdir $@
 ${CONFIG_HOME}/kitty/kitty.conf: ${CONFIG_HOME}/kitty
