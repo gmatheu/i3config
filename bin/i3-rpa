@@ -1,0 +1,51 @@
+#! /bin/bash
+
+PRIVATE_BROWSER="brave-browser --new-window"
+RPA_HOME=$HOME/.config/i3/rpa
+RPA_LOG=$RPA_HOME/rpa.log
+
+help="Enter -> Execute / Ctrl+Enter -> In a new browser / Ctrl+Shift+enter -> Show log file"
+actions=""
+rpa_entries=$(find "${RPA_HOME}" -name '*.sh' -printf '%f\n' | sed -e 's/.sh//' | xargs -I{} echo "{}")
+menu="${rpa_entries}\n${actions}"
+selection=$(echo -e "${menu}" |
+  rofi -threads 0 -width 100 \
+    -kb-accept-custom '' -kb-accept-custom-alt '' \
+    -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' \
+    -dmenu -i -p "RPA (${help}) ")
+
+ret=$?
+
+_low_action() {
+  msg=$1
+  notify-send -u low -t 2000 "RPA" "${msg}"
+  echo "[$(date --iso-8601=seconds)][INFO] ${msg}" >>"${RPA_LOG}"
+}
+_critical_action() {
+  msg=$1
+  notify-send -u critical -t 2000 "RPA" "${msg}"
+  echo "[$(date --iso-8601=seconds)][ERROR] ${msg}" >>"${RPA_LOG}"
+}
+
+case $ret in
+0)
+  _low_action "Triggering RPA: \n\t${selection}"
+  cd "$RPA_HOME" || _critical_action "Could not change directory to $RPA_HOME"
+  output=$(./$(echo "${selection}" | sed -e 's#/#_#').sh 2>&1)
+  ret=$?
+  case $ret in
+  0)
+    _low_action "All good: \n\t${selection}"
+    ;;
+  *)
+    _critical_action "Something went wrong \n${output}"
+    ;;
+  esac
+  ;;
+10)
+  _low_action "Triggering RPA (new window): \n\t${selection}"
+  ;;
+11)
+  rofi -threads 0 -width 200 -dmenu -i -p "RPA" < <(tail -n 100 "${RPA_LOG}")
+  ;;
+esac
