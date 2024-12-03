@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 XRANDR_TMP="/tmp/i3-actions_xrandr"
-xrandr >"${XRANDR_TMP}"
+if [ "$(find "${XRANDR_TMP}" -mmin -60)" == "" ]; then
+	xrandr >"${XRANDR_TMP}"
+fi
 EXTERNAL_DEVICE=$(grep connected <"${XRANDR_TMP}" | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
 PRIMARY_DEVICE=$(grep connected <${XRANDR_TMP} | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
 
