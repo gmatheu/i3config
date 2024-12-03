@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-EXTERNAL_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
-PRIMARY_DEVICE=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
+XRANDR_TMP="/tmp/i3-actions_xrandr"
+xrandr >"${XRANDR_TMP}"
+EXTERNAL_DEVICE=$(grep connected <"${XRANDR_TMP}" | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
+PRIMARY_DEVICE=$(grep connected <${XRANDR_TMP} | grep -v 'disconnected' | grep primary | cut -d ' ' -f 1)
 
 BATTERY_NOTIFY_HOME=${HOME}/.config/i3/battery-notify
 BATTERY_NOTIFY_PROCESS=battery-notify
