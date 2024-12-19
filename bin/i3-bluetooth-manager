@@ -1,0 +1,4 @@
+#/bin/bash
+
+I3_HOME=$1
+${I3_HOME}/rofi/rofi-bluetooth/rofi-bluetooth
