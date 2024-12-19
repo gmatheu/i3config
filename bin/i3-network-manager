@@ -1,4 +1,4 @@
 #/bin/bash
 
 I3_HOME=$1
-${I3_HOME}/rofi/networkmanager-dmenu/networkmanager_dmenu
+cd ${I3_HOME} && uv run rofi/networkmanager-dmenu/networkmanager_dmenu

@@ -2,7 +2,7 @@
 
 I3_HOME=$1
 
-python3 $I3_HOME/rofi/rofi-monitor-selector/monitor-switcher.py
+cd ${I3_HOME} && uv run $I3_HOME/rofi/rofi-monitor-selector/monitor-switcher.py
 
 sleep 3
 ${I3_HOME}/bin/i3-bar
