@@ -6,7 +6,7 @@ RPA_LOG=$RPA_HOME/rpa.log
 
 help="Enter -> Execute / Ctrl+Enter -> In a new browser / Ctrl+Shift+enter -> Show log file"
 actions=""
-rpa_entries=$(find "${RPA_HOME}" -name '*.sh' -printf '%f\n' | sed -e 's/.sh//' | xargs -I{} echo "{}")
+rpa_entries=$(find "${RPA_HOME}" -maxdepth 1 -name '*.sh' -printf '%f\n' | sed -e 's/.sh//' | xargs -I{} echo "{}")
 menu="${rpa_entries}\n${actions}"
 selection=$(echo -e "${menu}" |
   rofi -threads 0 -width 100 \
