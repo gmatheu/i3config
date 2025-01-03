@@ -12,3 +12,13 @@ setxkbmap -model pc105 -layout us -variant altgr-intl
 # Remap keys
 # Capslock -> Escape
 xmodmap -e "keycode 66 = Escape NoSymbol Escape"
+
+TYPEMATIC_DELAY=150
+TYPEMATIC_RATE=30
+xset r rate ${TYPEMATIC_DELAY} ${TYPEMATIC_RATE}
+
+DETAIL="""
+Keyboard: ${TYPEMATIC_DELAY}ms delay, ${TYPEMATIC_RATE}hz rate
+
+"""
+notify-send "[i3] Settings applied" "$DETAIL"
