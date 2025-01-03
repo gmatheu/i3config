@@ -32,6 +32,8 @@ battery-notify-on: Activate or show current battery-notify process (pid:${BATTER
 battery-notify-off: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 battery-notify-status: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 settings-workspace: Creates settings workspace
+services-user-restart: Restart a user daemon
+services-user-status: Restart a user daemon
 services-restart: Restart a system daemon
 services-status: Restart a system daemon
 quick-websearch: Search clipboard text into the default web browser
@@ -114,11 +116,17 @@ $(tail ${BATTERY_NOTIFY_HOME}/*.log)
 "
 	action=$(echo -e "$status" | rofi -width 800 -dmenu -p "${BATTERY_NOTIFY_PROCESS} status:" | cut -d ':' -f 1)
 	;;
+services-user-restart)
+	${SERVICES_CMD} restart user
+	;;
+services-user-status)
+	${SERVICES_CMD} status user
+	;;
 services-restart)
-	${SERVICES_CMD} restart
+	${SERVICES_CMD} restart global
 	;;
 services-status)
-	${SERVICES_CMD} status
+	${SERVICES_CMD} status global
 	;;
 screenkey-selection)
 	${SCREENKEY_CMD} selection
