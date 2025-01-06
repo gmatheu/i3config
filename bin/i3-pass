@@ -2,11 +2,11 @@
 
 PRIVATE_BROWSER="brave-browser --new-window"
 
-help="Enter -> Clibpoard / Ctrl+Enter -> Open / Ctrl+Shift+enter -> RPA"
+help="Enter -> Clibpoard / Ctrl+Enter -> Copy name / Ctrl+Shift+enter -> RPA"
 actions="passupdate: Pull from remote\npasspush: Push to remote\n"
 password_entries=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | xargs -I{} echo "{}\n")
 menu="${password_entries}\n${actions}"
-selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' |\
+selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' |
   rofi -threads 0 -width 100 \
     -kb-accept-custom '' -kb-accept-custom-alt '' \
     -kb-custom-1 "Ctrl+Return" -kb-custom-2 'Ctrl+Shift+Return' \
@@ -16,45 +16,38 @@ ret=$?
 
 action=$(echo ${selection} | cut -d ':' -f 1)
 case $action in
-  passupdate)
-    output=$(pass git pull)
-    notify-send -u low -t 5000 "Pass" "Pulling changes from remote\n${output}"
+passupdate)
+  output=$(pass git pull)
+  notify-send -u low -t 5000 "Pass" "Pulling changes from remote\n${output}"
+  ;;
+passpush)
+  output=$(pass git push)
+  notify-send -u low -t 5000 "Pass" "Pushing changes to remote\n${output}"
+  ;;
+*)
+  :
+  password=${action}
+  case $ret in
+  0)
+    if pass show "${password}" | head -n 1 | xclip -selection clipboard; then
+      notify-send -u low -t 5000 "Pass" "Password copied to clipboard: \n\t${password}"
+    else
+      notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
+    fi
     ;;
-  passpush)
-    output=$(pass git push)
-    notify-send -u low -t 5000 "Pass" "Pushing changes to remote\n${output}"
+  10)
+    if echo "${password}" | xclip -selection clipboard; then
+      notify-send -u low -t 5000 "Pass" "Password name copied to clipboard: \n\t${password}"
+    else
+      notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
+    fi
     ;;
-  *):
-    password=${action}
-    case $ret in
-      0)
-        if pass show "${password}" | head -n 1 | xclip -selection clipboard
-        then
-          notify-send -u low -t 5000 "Pass" "Password copied to clipboard: \n\t${password}"
-        else
-          notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
-        fi
-        ;;
-      10)
-        if pass show "${password}" | head -n 1 | xclip -selection clipboard
-        then
-
-          if pass show "${password}" | grep -e 'url' | cut -d ':' -f 2- | xargs -I {} ${PRIVATE_BROWSER} {} &
-          then
-            notify-send -u low -t 2000 "Pass" "Opening browser. Password copied to clipboard: \n\t${password}"
-          else
-            notify-send -u normal -t 5000 "Pass" "No url. Password copied to clipboard: \n\t${password}"
-          fi
-        else
-          notify-send -u critical -t 5000 "Pass" "Could not copy password to clipboard: \n\t${password}"
-        fi
-        ;;
-      11)
-        notify-send -u low -t 2000 "Pass" "Triggering RPA: \n\t${password}"
-        RPA_HOME=$HOME/.config/i3/rpa
-        cd "$RPA_HOME" || notify-send -u critical -t 2000 "Pass" "Could not change directory to $RPA_HOME"
-        ./$(echo "${password}" | sed -e 's#/#_#').sh
-        ;;
-    esac
+  11)
+    notify-send -u low -t 2000 "Pass" "Triggering RPA: \n\t${password}"
+    RPA_HOME=$HOME/.config/i3/rpa
+    cd "$RPA_HOME" || notify-send -u critical -t 2000 "Pass" "Could not change directory to $RPA_HOME"
+    ./$(echo "${password}" | sed -e 's#/#_#').sh
     ;;
+  esac
+  ;;
 esac
