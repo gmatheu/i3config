@@ -6,19 +6,28 @@ TRACKPAD_ID=$(xinput list | grep Touchpad | grep -oP 'id=(\w*)' | cut -d = -f 2)
 ENABLE_TAP_ENABLED=$(xinput list-props $TRACKPAD_ID | grep 'Tapping Enabled (' | grep -oP '\(.*\)' | tr -d '()')
 xinput set-prop $TRACKPAD_ID $ENABLE_TAP_ENABLED 1
 
-# Setting keyboard layout with proper spanish key combinations
-setxkbmap -model pc105 -layout us -variant altgr-intl
-
 # Remap keys
 # Capslock -> Escape
 xmodmap -e "keycode 66 = Escape NoSymbol Escape"
 
-TYPEMATIC_DELAY=150
+TYPEMATIC_DELAY=200
 TYPEMATIC_RATE=30
 xset r rate ${TYPEMATIC_DELAY} ${TYPEMATIC_RATE}
+
+systemctl --user restart kanata.service
+kanata_detail=$(systemctl --user status kanata.service | grep Active)
+systemctl --user stop espanso.service
+espanso_detail=$(systemctl --user status espanso.service | grep Active)
+
+# Setting keyboard layout with proper spanish key combinations
+setxkbmap -model pc105 -layout us -variant altgr-intl
 
 DETAIL="""
 Keyboard: ${TYPEMATIC_DELAY}ms delay, ${TYPEMATIC_RATE}hz rate
 
+Kanata: ${kanata_detail}
+Espanso: ${espanso_detail}
 """
 notify-send "[i3] Settings applied" "$DETAIL"
+
+sudo chmod a+w /sys/class/backlight/intel_backlight/brightness
