@@ -2,7 +2,12 @@
 LOCKWALL=${@:--i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png}
 /usr/share/backgrounds/little_numbat_boy_by_azskalt.png
 option=$(echo -e "suspend\nlock\nlogout\nhibernate\nreboot\npoweroff\nKill user $USER" | rofi -width 600 -dmenu -p system:)
+
 function lock {
+	if [[ -f ~/.tmux/plugins/tmux-resurrect/scripts/save.sh ]]; then
+		bash ~/.tmux/plugins/tmux-resurrect/scripts/save.sh
+	fi
+
 	i3lock ${LOCKWALL}
 }
 
