@@ -19,13 +19,13 @@ _show_screenkey() {
 	screen=$1
 	left=$2
 	top=-10
-	screenkey --scr "${screen}" -p fixed -g 60%x5%+"${left}"%${top}% --bg-color gray &
+	screenkey -M --scr "${screen}" -p fixed -g 60%x5%+"${left}"%${top}% --bg-color gray &
 }
 
 case $action in
 selection)
 	notify-send -u low -t 1000 "Screenkey" "Started: Select where to start"
-	screenkey -p fixed -g "$(slop -n -f '%g')" --bg-color gray
+	screenkey -M -p fixed -g "$(slop -n -f '%g')" --bg-color gray
 	;;
 bottom-primary)
 	notify-send -u low -t 1000 "Screenkey" "Started: bottom primary"
