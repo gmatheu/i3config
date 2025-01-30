@@ -13,3 +13,6 @@
 [submodule "i3blocks/i3blocks-contrib"]
 	path = i3blocks/i3blocks-contrib
 	url = https://github.com/vivien/i3blocks-contrib
+[submodule "plugins/i3-restore"]
+	path = plugins/i3-restore
+	url = https://github.com/jdholtz/i3-restore.git

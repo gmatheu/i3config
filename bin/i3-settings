@@ -10,7 +10,7 @@ xinput set-prop $TRACKPAD_ID $ENABLE_TAP_ENABLED 1
 # Capslock -> Escape
 xmodmap -e "keycode 66 = Escape NoSymbol Escape"
 
-TYPEMATIC_DELAY=200
+TYPEMATIC_DELAY=500
 TYPEMATIC_RATE=30
 xset r rate ${TYPEMATIC_DELAY} ${TYPEMATIC_RATE}
 
