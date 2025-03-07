@@ -21,6 +21,25 @@ set $i3path ~/.config/i3/bin
 set $i3lockargs -i /usr/share/backgrounds/warty-final-ubuntu.png
 set $i3lockwall i3lock --nofork $i3lockargs
 
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+# U+1F427
+# set $ws1 "1:🐧"
+set $ws1 "1:term"
+# U+1F30E
+# set $ws2 "2:🌎"
+set $ws2 "2:browser"
+set $ws3 "3:three"
+set $ws4 "4:teams"
+set $ws5 "5:five"
+set $ws6 "6:six"
+set $ws7 "7:seven"
+set $ws8 "8:remote"
+set $ws9 "9"
+# U+1F529
+set $ws10 "10:etc"
+
+# set $ws10 "10:settings"
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
 
@@ -44,24 +63,6 @@ exec_always feh --bg-scale /usr/share/backgrounds/ubuntu-default-greyscale-wallp
 
 
 
-# Define names for default workspaces for which we configure key bindings later on.
-# We use variables to avoid repeating the names in multiple places.
-# U+1F427
-# set $ws1 "1:🐧"
-set $ws1 "1:term"
-# U+1F30E
-# set $ws2 "2:🌎"
-set $ws2 "2:browser"
-set $ws3 "3:three"
-set $ws4 "4:teams"
-set $ws5 "5:five"
-set $ws6 "6:six"
-set $ws7 "7:seven"
-set $ws8 "8:remote"
-set $ws9 "9"
-# U+1F529
-set $ws10 "10:etc"
-# set $ws10 "10:settings"
 
 
 
