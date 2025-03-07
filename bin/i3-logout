@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 LOCKWALL=${@:--i /usr/share/backgrounds/ubuntu-default-greyscale-wallpaper.png}
 /usr/share/backgrounds/little_numbat_boy_by_azskalt.png
-option=$(echo -e "suspend\nlock\nlogout\nhibernate\nreboot\npoweroff\nKill user $USER" | rofi -width 600 -dmenu -p system:)
+option=$(echo -e "suspend\nlock\nlogout\nhibernate\nreboot\npoweroff" | rofi -width 600 -dmenu -p system:)
 
 function lock {
 	if [[ -f ~/.tmux/plugins/tmux-resurrect/scripts/save.sh ]]; then
 		bash ~/.tmux/plugins/tmux-resurrect/scripts/save.sh
+	fi
+	if [[ -f ~/.config/intelli-shell/scripts/tmuxp_freeze_all.sh ]]; then
+		~/.config/intelli-shell/scripts/tmuxp_freeze_all.sh
+	fi
+	if [[ -f ~/.config/i3/plugins/i3-restore/i3-save ]]; then
+		bash ~/.config/i3/plugins/i3-restore/i3-save
 	fi
 
 	i3lock ${LOCKWALL}
@@ -33,7 +39,7 @@ reboot)
 poweroff)
 	/usr/bin/systemctl poweroff
 	;;
-"kill user $USER")
-	loginctl kill-user "$USER"
-	;;
+# "kill user $USER")
+# 	loginctl kill-user "$USER"
+# 	;;
 esac
