@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+default_card="Jabra Evolve2 85"
+profiles=$(pactl -f json list | jq '.cards[] | select(.properties."device.alias"=="Jabra Evolve2 85") | .profiles | to_entries[] | "Jabra Evolve2 85: " + .key ' | tr -d '"')
+pavucontrol="\npavucontrol: configuration\npavucontrol: output Devices\npavucontrol: input Devices"
+option=$(echo -e "$profiles\n--------------------${pavucontrol}" | rofi -width 600 -dmenu -p 'Pulse Audio Options:')
+
+prefix=$(echo "$option" | cut -d ':' -f 1 | tr -d " ")
+suffix=$(echo "$option" | cut -d ':' -f 2 | tr -s " " | tr -d " ")
+
+# notify-send "$prefix: $suffix"
+case $prefix in
+'JabraEvolve285')
+	index=$(pactl -f json list | jq '.cards[] | select(.properties."device.alias"=="Jabra Evolve2 85")| .index')
+	notify-send -u low -t 3000 "Pulse Audio" "Setting profile for ${default_card}: \n\t${suffix}"
+	pactl set-card-profile "${index}" "$suffix"
+	;;
+'pavucontrol')
+	case $suffix in
+	'configuration')
+		pavucontrol --tab=5
+		;;
+	'outputDevices')
+		pavucontrol --tab=3
+		;;
+	'inputDevices')
+		pavucontrol --tab=4
+		;;
+	esac
+	;;
+esac

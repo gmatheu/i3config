@@ -225,8 +225,8 @@ bindsym $mod+Shift+b exec $i3path/i3-bluetooth-manager $i3home
 # set_from_resource $i3-wm.program.files i3-wm.program.files /usr/bin/nautilus --new-window
 # bindsym $mod+$i3-wm.binding.files exec --no-startup-id $i3-wm.program.files
 
-bindsym $mod+Shift+v exec $i3home/rofi-pactl/rofi-pactl.lua
-
+# bindsym $mod+Shift+v exec $i3home/rofi-pactl/rofi-pactl.lua
+bindsym $mod+Shift+v exec $i3path/i3-pactl
 
 
 # Use pactl to adjust volume in PulseAudio.
