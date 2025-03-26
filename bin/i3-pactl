@@ -1,19 +1,35 @@
 #!/usr/bin/env bash
 
 default_card="Jabra Evolve2 85"
-profiles=$(pactl -f json list | jq '.cards[] | select(.properties."device.alias"=="Jabra Evolve2 85") | .profiles | to_entries[] | "Jabra Evolve2 85: " + .key ' | tr -d '"')
-pavucontrol="\npavucontrol: configuration\npavucontrol: output Devices\npavucontrol: input Devices"
-option=$(echo -e "$profiles\n--------------------${pavucontrol}" | rofi -width 600 -dmenu -p 'Pulse Audio Options:')
+default_card_prefix=$(echo "${default_card}" | tr -d " ")
+profiles=$(pactl -f json list | jq '.cards[] | select(.properties."device.alias"=="'"$default_card"'") | .profiles | to_entries[] | "'"${default_card_prefix}: "'" + .key ' | tr -d '"')
+default_card_active=$(pactl -f json list | jq '.cards[] | select(.properties."device.alias"=="'"$default_card"'")| .active_profile' | tr -d '"')
+default_card_options="${default_card} (active: ${default_card_active})\n${profiles}"
+
+builtin_prefix="builtin"
+builtin_description="Built-in Audio Analog Stereo"
+builtin_index=$(pactl -f json list sources | jq '.[] | select(.description == "'"$builtin_description"'") | .index')
+builtin_active=$(pactl -f json list sources | jq '.[] | select(.description == "'"$builtin_description"'") | .active_port' | tr -d '"')
+builtin_sources=$(pactl -f json list sources | jq '.[] | select(.description =="'"$builtin_description"'") | .ports[] | "'"${builtin_prefix}: "'" + .name + ": " + .description' | tr -d '"')
+
+separator="\n--------------------\n"
+builtin_options="${builtin_description} (active: ${builtin_active})\n${builtin_sources}"
+pavucontrol="pavucontrol: configuration\npavucontrol: output Devices\npavucontrol: input Devices"
+option=$(echo -e "${default_card_options}${separator}${builtin_options}${separator}${pavucontrol}" | rofi -width 600 -dmenu -p 'Pulse Audio Options:')
 
 prefix=$(echo "$option" | cut -d ':' -f 1 | tr -d " ")
 suffix=$(echo "$option" | cut -d ':' -f 2 | tr -s " " | tr -d " ")
 
 # notify-send "$prefix: $suffix"
 case $prefix in
-'JabraEvolve285')
+"${default_card_prefix}")
 	index=$(pactl -f json list | jq '.cards[] | select(.properties."device.alias"=="Jabra Evolve2 85")| .index')
 	notify-send -u low -t 3000 "Pulse Audio" "Setting profile for ${default_card}: \n\t${suffix}"
 	pactl set-card-profile "${index}" "$suffix"
+	;;
+"${builtin_prefix}")
+	pactl set-source-port "${builtin_index}" "${suffix}"
+	notify-send -u low -t 3000 "Pulse Audio" "Setting source port for ${builtin_description}: \n\t${suffix}"
 	;;
 'pavucontrol')
 	case $suffix in
