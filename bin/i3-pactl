@@ -28,7 +28,11 @@ builtin_sources=$(pactl -f json list sources | jq '.[] | select(.description =="
 separator="\n--------------------\n"
 builtin_options="[B]: ${builtin_description} (active: ${builtin_active})\n${builtin_sources}"
 pavucontrol="pavucontrol: configuration\npavucontrol: output Devices\npavucontrol: input Devices"
-option=$(echo -e "${default_card_options}${separator}${builtin_options}${separator}${pavucontrol}" | rofi -width 600 -dmenu -p 'Pulse Audio Options:')
+
+all_volumes=$(pactl --format json list sources | jq -r '.[] | select (.active_port != null) | "toggle: \(.description): volume:\( .volume | to_entries[0].value.value_percent), muted:\( .mute )"' | grep -v 'Monitor')
+inputs_options="[I] \n${all_volumes}"
+
+option=$(echo -e "${default_card_options}${separator}${builtin_options}${separator}${pavucontrol}${separator}${inputs_options}" | rofi -lines 100 -width 600 -dmenu -p 'Pulse Audio Options:')
 
 prefix=$(echo "$option" | cut -d ':' -f 1 | tr -d " ")
 suffix=$(echo "$option" | cut -d ':' -f 2 | tr -s " " | tr -d " ")
