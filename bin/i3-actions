@@ -19,6 +19,7 @@ RPA_CMD="${I3_BIN}/i3-rpa"
 NOTES_CMD="${I3_BIN}/i3-voice-notes"
 
 menu="swapcaps: Swap Caps Lock as Esc
+notes: Notes actions menu
 restorecaps: Restore Caps Lock
 kbdlayoutintl: Keyboard layout AltGr Intl
 notifyoff: Disable system notifications
@@ -46,7 +47,6 @@ screenkey: Open screenkey menu
 screenkey-off: Closes any screenkey instance
 virtual-monitors: Open virtual monitor menu
 rpa: Open RPA actions menu
-notes: Notes actions menu
 "
 
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
