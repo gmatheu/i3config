@@ -16,6 +16,7 @@ SERVICES_CMD="${I3_BIN}/i3-services"
 SCREENKEY_CMD="${I3_BIN}/i3-screenkey"
 VIRTUAL_MONITORS_CMD="${I3_BIN}/i3-virtual-monitor"
 RPA_CMD="${I3_BIN}/i3-rpa"
+NOTES_CMD="${I3_BIN}/i3-voice-notes"
 
 menu="swapcaps: Swap Caps Lock as Esc
 restorecaps: Restore Caps Lock
@@ -45,6 +46,7 @@ screenkey: Open screenkey menu
 screenkey-off: Closes any screenkey instance
 virtual-monitors: Open virtual monitor menu
 rpa: Open RPA actions menu
+notes: Notes actions menu
 "
 
 action=$(echo -e "$menu" | rofi -width 500 -dmenu -p Actions: | cut -d ':' -f 1)
@@ -148,6 +150,9 @@ virtual-monitors)
 	;;
 rpa)
 	${RPA_CMD}
+	;;
+notes)
+	${NOTES_CMD}
 	;;
 quick-websearch)
 	clipboard=$(xclip -o -selection clipboard | head -n 1)
