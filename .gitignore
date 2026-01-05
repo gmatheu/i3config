@@ -2,3 +2,4 @@ rpa
 battery-notify
 
 *.xz
+workspace_*.json

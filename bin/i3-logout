@@ -10,9 +10,9 @@ function lock {
 	if [[ -f ~/.config/intelli-shell/scripts/tmuxp_freeze_all.sh ]]; then
 		~/.config/intelli-shell/scripts/tmuxp_freeze_all.sh
 	fi
-	if [[ -f ~/.config/i3/plugins/i3-restore/i3-save ]]; then
-		bash ~/.config/i3/plugins/i3-restore/i3-save
-	fi
+	# if [[ -f ~/.config/i3/plugins/i3-restore/i3-save ]]; then
+	# 	bash ~/.config/i3/plugins/i3-restore/i3-save
+	# fi
 
 	i3lock ${LOCKWALL}
 }

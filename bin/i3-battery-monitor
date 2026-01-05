@@ -6,34 +6,37 @@
 action=${1:-""}
 battery_level=$(upower -i "$(upower -e | grep '/battery')" | grep percentage | tr -s ' ' | cut -d ' ' -f 3 | tr -d '%')
 battery_status=$(upower -i "$(upower -e | grep '/battery')" | grep state | tr -s ' ' | cut -d ' ' -f 3)
-power_button_cmd="sudo $HOME/.local/bin/frmw_ectool led power"
+power_button_cmd="echo sudo $HOME/.local/bin/frmw_ectool led power"
 skipfile="/tmp/i3-battery-monitor.skip"
 
 if [[ $action == "skip" ]]; then
-  $power_button_cmd off
-  touch ${skipfile}
-  exit
+	$power_button_cmd off
+	touch ${skipfile}
+	exit
 fi
 if [[ $action == "off" ]]; then
-  $power_button_cmd off
-  exit
+	$power_button_cmd off
+	exit
 fi
 if [[ -f ${skipfile} ]]; then
-  rm ${skipfile}
-  echo "Skipping this execution"
-  exit
+	rm ${skipfile}
+	echo "Skipping this execution"
+	exit
 fi
 
 if [[ $battery_level -ge 80 ]]; then
-  $power_button_cmd green
+	$power_button_cmd green
 elif [[ $battery_level -ge 25 ]]; then
-  $power_button_cmd white
+	$power_button_cmd white
+	# notify-send -u low --icon=dialog-information "Battery" "Medium battery: ${battery_level}% (${battery_status})"
 elif [[ $battery_level -ge 15 ]]; then
-  $power_button_cmd amber
+	$power_button_cmd amber
+	notify-send -u normal --icon=dialog-information "Battery" "Low battery: ${battery_level}% (${battery_status})"
 else
-  if [[ $battery_status == "discharging" ]]; then
-    $power_button_cmd red
-  else
-    $power_button_cmd yellow
-  fi
+	if [[ $battery_status == "discharging" ]]; then
+		$power_button_cmd red
+		notify-send -u critical --icon=dialog-warning "Battery" "Critical battery: ${battery_level}% (${battery_status})"
+	else
+		$power_button_cmd yellow
+	fi
 fi
