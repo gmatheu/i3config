@@ -1,0 +1,140 @@
+#!/bin/bash
+
+set -e
+
+BASE_CMD="uvx --from git+https://codeberg.org/gmatheu/sst-notes --with faster-whisper voice-notes record"
+
+NOTES_DIR="$HOME/voice-notes"
+
+PRESETS=(
+	"Quick Note:15,base,auto,true:Record for 15 seconds with basic settings"
+	"Lightning Note:10,base,auto,true:Record for 10 seconds with basic settings"
+	"Long Note:60,base,auto,true:Record for 1 minutes with basic settings"
+	"Detailed Note:300,medium,auto,true:Record for 5 minutes with medium model"
+	"No Clipboard:60,base,auto,false:Record for 60 seconds without copying to clipboard"
+	"Custom Settings:::Define custom recording parameters"
+)
+
+parse_preset() {
+	local preset="$1"
+	IFS=':' read -r name params desc <<<"$preset"
+	IFS=',' read -r duration model language clipboard <<<"$params"
+	echo "$duration" "$model" "$language" "$clipboard"
+}
+
+show_menu() {
+	local prompt="$1"
+	local options="$2"
+
+	echo -e "$options" | rofi -dmenu -p "$prompt" -i -no-custom
+}
+
+get_custom_settings() {
+	duration=$(show_menu "Duration (seconds)" "30\n60\n120\n300\n600")
+	if [ -z "$duration" ]; then exit 1; fi
+
+	model=$(show_menu "Whisper Model" "base\nsmall\nmedium\nlarge-v1\nlarge-v2")
+	if [ -z "$model" ]; then exit 1; fi
+
+	language=$(show_menu "Language" "auto\nen\nes\nfr\nde\nit\npt\nru\nja\nzh\nko")
+	if [ -z "$language" ]; then exit 1; fi
+
+	clipboard_choice=$(show_menu "Copy to clipboard?" "Yes\nNo")
+	if [ -z "$clipboard_choice" ]; then exit 1; fi
+	clipboard=$([ "$clipboard_choice" = "Yes" ] && echo "true" || echo "false")
+
+	echo "$duration" "$model" "$language" "$clipboard"
+}
+
+get_last_notes() {
+	local notes_dir="$1"
+	mkdir -p "$notes_dir"
+	ls -t "$notes_dir"/*_note.txt 2>/dev/null | head -10 || true
+}
+
+format_timestamp() {
+	local filename="$1"
+	local basename=$(basename "$filename")
+	local timestamp=${basename%%_note.txt}
+	local year=${timestamp:0:4}
+	local month=${timestamp:4:2}
+	local day=${timestamp:6:2}
+	local hour=${timestamp:9:2}
+	local minute=${timestamp:11:2}
+	local second=${timestamp:13:2}
+	echo "$year-$month-$day $hour:$minute:$second"
+}
+
+get_note_preview() {
+	local filename="$1"
+	if [ -f "$filename" ]; then
+		head -c 50 "$filename" | tr '\n' ' ' | sed 's/[[:space:]]*$//' | sed 's/  */ /g'
+	fi
+}
+
+copy_note_to_clipboard() {
+	local file_path="$1"
+	if [ -f "$file_path" ]; then
+		cat "$file_path" | xclip -selection clipboard
+		local timestamp=$(format_timestamp "$file_path")
+		notify-send "Voice Note Copied" "Note from $timestamp copied to clipboard"
+	fi
+}
+
+OPTIONS=""
+for preset in "${PRESETS[@]}"; do
+	IFS=':' read -r name params desc <<<"$preset"
+	OPTIONS+="$name ($desc)\n"
+done
+
+LAST_NOTES=$(get_last_notes "$NOTES_DIR")
+if [ -n "$LAST_NOTES" ]; then
+	OPTIONS+="---\n"
+	while IFS= read -r note_file; do
+		if [ -n "$note_file" ]; then
+			timestamp=$(format_timestamp "$note_file")
+			preview=$(get_note_preview "$note_file")
+			OPTIONS+="Note from $timestamp: $preview\n"
+		fi
+	done <<<"$LAST_NOTES"
+fi
+OPTIONS=${OPTIONS%\\n}
+
+selected=$(show_menu "Voice Notes Recorder" "$OPTIONS")
+
+if [ -z "$selected" ]; then
+	exit 1
+fi
+
+if [[ "$selected" == "Note from "* ]]; then
+	timestamp_part=${selected#Note from }
+	while IFS= read -r note_file; do
+		if [ -n "$note_file" ]; then
+			file_timestamp=$(format_timestamp "$note_file")
+			if [ "$file_timestamp" = "$timestamp_part" ]; then
+				copy_note_to_clipboard "$note_file"
+				exit 0
+			fi
+		fi
+	done <<<"$LAST_NOTES"
+	exit 1
+fi
+
+for preset in "${PRESETS[@]}"; do
+	IFS=':' read -r name params desc <<<"$preset"
+	if [[ "$selected" == "$name"* ]]; then
+		if [ "$name" = "Custom Settings" ]; then
+			read -r duration model language clipboard <<<"$(get_custom_settings)"
+		else
+			read -r duration model language clipboard <<<"$(parse_preset "$preset")"
+		fi
+		break
+	fi
+done
+
+CMD="$BASE_CMD --duration $duration --model $model --language $language"
+if [ "$clipboard" = "true" ]; then
+	CMD="$CMD --clipboard"
+fi
+
+exec $CMD
