@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+DISPLAY_NUM=99
+RESOLUTION="1920x1080x24"
+VNC_PORT=5901
+
+case "$1" in
+  start)
+    echo "Starting Xvfb :$DISPLAY_NUM ($RESOLUTION)..."
+    Xvfb :$DISPLAY_NUM -screen 0 $RESOLUTION &
+    XVFB_PID=$!
+    export DISPLAY=:$DISPLAY_NUM
+    echo "Starting x11vnc on port $VNC_PORT..."
+    x11vnc -display :$DISPLAY_NUM -nopw -forever -rfbport $VNC_PORT &
+    VNC_PID=$!
+    echo "Xvfb PID=$XVFB_PID, x11vnc PID=$VNC_PID"
+    ;;
+  stop)
+    echo "Stopping Xvfb and x11vnc..."
+    pkill -f "Xvfb :$DISPLAY_NUM"
+    pkill -f "x11vnc -display :$DISPLAY_NUM"
+    ;;
+  status)
+    pgrep -fl "Xvfb :$DISPLAY_NUM" && pgrep -fl "x11vnc -display :$DISPLAY_NUM"
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status}"
+    exit 1
+esac
