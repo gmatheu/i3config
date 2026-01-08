@@ -1,0 +1,109 @@
+#!/bin/bash
+
+set -e
+
+if command -v gum >/dev/null 2>&1; then
+    green_echo() { gum style --foreground 2 "$1"; }
+    yellow_echo() { gum style --foreground 3 "$1"; }
+else
+    green_echo() { echo "$1"; }
+    yellow_echo() { echo "$1"; }
+fi
+
+dry_run=false
+if [ "$1" = "--dry-run" ]; then
+    dry_run=true
+fi
+
+# Find files containing ln-remote-chunk markers, excluding .git
+files=$(find . -type f -not -path "./.git/*" -not -name "*.old" -exec grep -l "ln-remote-chunk" {} \; 2>/dev/null || true)
+
+if [ -z "$files" ]; then
+    echo "No files with ln-remote-chunk markers found."
+    exit 0
+fi
+
+processed_count=0
+
+for file in $files; do
+    # Skip the script itself
+    if [ "$file" = "./ln-remote-chunk.sh" ]; then
+        continue
+    fi
+
+    echo "Processing: $file"
+
+    # Skip if file is in .git or other unwanted dirs, but for now process all
+
+    new_content=""
+    in_block=false
+    url=""
+    block_started=false
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        if echo "$line" | grep -qE '^#ln-remote-chunk: (.*)$'; then
+            url=$(echo "$line" | sed -E 's/^#ln-remote-chunk: (.*)$/\1/')
+            if [ -z "$url" ]; then
+                yellow_echo "Warning: Empty URL in $file at line with marker"
+                new_content+="$line"$'\n'
+                continue
+            fi
+            in_block=true
+            block_started=true
+            new_content+="$line"$'\n'  # Add the marker line
+        elif [[ $line == "#ln-remote-chunk:end" ]]; then
+            if $in_block; then
+                # Download and replace block content
+                echo "  Replacing block with content from $url"
+                if [ "$dry_run" = true ]; then
+                    green_echo "  Would download $url and replace block in $file"
+                else
+                    # Download content
+                    if ! downloaded=$(curl -s "$url" 2>/dev/null); then
+                        yellow_echo "Warning: Failed to download $url for $file"
+                        # Skip adding content, but add the end marker
+                        new_content+="$line"$'\n'
+                        in_block=false
+                        continue
+                    fi
+                    new_content+="$downloaded"$'\n'
+                fi
+                new_content+="$line"$'\n'  # Add the end marker after content
+                in_block=false
+            else
+                # End without start, perhaps add as is
+                new_content+="$line"$'\n'
+            fi
+        elif ! $in_block; then
+            new_content+="$line"$'\n'
+        fi
+        # If in_block and not marker lines, skip the original block content (don't add to new_content)
+    done < "$file"
+
+    if $block_started && $in_block; then
+        yellow_echo "Warning: Unclosed ln-remote-chunk block in $file"
+    fi
+
+    if [ "$dry_run" = true ]; then
+        if $block_started; then
+            green_echo "Would update: $file"
+        fi
+    else
+        if $block_started; then
+            # Backup
+            if [ -f "$file" ]; then
+                cp "$file" "${file}.old"
+            fi
+            # Write new content
+            echo -n "$new_content" > "$file"
+            green_echo "Updated: $file"
+            processed_count=$((processed_count + 1))
+        fi
+    fi
+done
+
+if [ "$dry_run" = true ]; then
+    echo "Dry run completed. No files modified."
+else
+    echo "Processed $processed_count file(s)."
+fi

@@ -1,2 +1,3 @@
-bin/i3-voice-notes,https://codeberg.org/gmatheu/sst-notes/raw/branch/main/scripts/launcher/rofi-voice-notes.sh,+x
+bin/i3-voice-notes,https://codeberg.org/gmatheu/stt-notes/raw/branch/main/scripts/launcher/rofi-voice-notes.sh,+x
 ln-remote-files,https://codeberg.org/gmatheu/ln-remote-files/raw/branch/main/ln-remote-files.sh,+x
+ln-remote-chunk,https://codeberg.org/gmatheu/ln-remote-files/raw/branch/main/ln-remote-chunk.sh,+x

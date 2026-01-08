@@ -2,9 +2,9 @@
 
 set -e
 
-BASE_CMD="uvx --from git+https://codeberg.org/gmatheu/sst-notes --with faster-whisper voice-notes record"
-
-NOTES_DIR="$HOME/voice-notes"
+NOTES_CMD="uvx --from git+https://codeberg.org/gmatheu/stt-notes --no-progress --with faster-whisper stt-notes record"
+BASE_CMD=$NOTES_CMD
+NOTES_DIR="$HOME/.local/share/stt-notes"
 
 PRESETS=(
 	"Quick Note:15,base,auto,true:Record for 15 seconds with basic settings"
@@ -137,4 +137,8 @@ if [ "$clipboard" = "true" ]; then
 	CMD="$CMD --clipboard"
 fi
 
-exec $CMD
+if command -v terminology >/dev/null 2>&1; then
+	exec terminology -B -W --name=stt-notes --title=stt-notes --geometry 60x6+-700+80 -e "$CMD"
+else
+	exec $CMD
+fi
