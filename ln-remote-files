@@ -13,6 +13,12 @@ else
 fi
 #ln-remote-chunk:end
 
+if command -v gum >/dev/null 2>&1; then
+    red_echo() { gum style --foreground 1 "$1"; }
+else
+    red_echo() { echo "$1"; }
+fi
+
 dry_run=false
 if [ "$1" = "--dry-run" ]; then
 	dry_run=true
@@ -45,6 +51,12 @@ while read -r line; do
 		green_echo "Would create: $target"
 	else
 		mkdir -p "$(dirname "$target")"
+
+		status=$(curl -s -w "%{http_code}" "$url" -o /dev/null)
+		if [ "$status" -ne 200 ]; then
+			red_echo "Error: Failed to download $url (HTTP $status)"
+			continue
+		fi
 
 		if [ -f "$target" ]; then
 			cp "$target" "${target}.old"
