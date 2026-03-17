@@ -2,7 +2,7 @@
 
 set -e
 
-NOTES_CMD="uvx --from git+https://codeberg.org/gmatheu/stt-notes --no-progress --with faster-whisper stt-notes record"
+NOTES_CMD="uvx --from git+https://codeberg.org/gmatheu/stt-notes --no-progress --with faster-whisper stt-notes record --clipboard "
 BASE_CMD=$NOTES_CMD
 NOTES_DIR="$HOME/.local/share/stt-notes"
 
@@ -138,7 +138,8 @@ if [ "$clipboard" = "true" ]; then
 fi
 
 if command -v terminology >/dev/null 2>&1; then
-	exec terminology -B -W --name=stt-notes --title=stt-notes --geometry 60x6+-700+80 -e "$CMD"
+	terminology -B -W --name=stt-notes --title=stt-notes --geometry 60x6+-700+80 -e "$CMD" &&
+		find "${NOTES_DIR}" -name '*_note.txt' -mtime -1 | sort -r | head -n 1 | xargs -I{} cat {} | xclip -selection clipboard
 else
 	exec $CMD
 fi
