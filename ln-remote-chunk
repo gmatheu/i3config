@@ -10,6 +10,12 @@ else
     yellow_echo() { echo "$1"; }
 fi
 
+if command -v gum >/dev/null 2>&1; then
+    red_echo() { gum style --foreground 1 "$1"; }
+else
+    red_echo() { echo "$1"; }
+fi
+
 dry_run=false
 if [ "$1" = "--dry-run" ]; then
     dry_run=true
@@ -57,15 +63,24 @@ for file in $files; do
                 echo "  Replacing block with content from $url"
                 if [ "$dry_run" = true ]; then
                     green_echo "  Would download $url and replace block in $file"
-                else
-                    # Download content
-                    if ! downloaded=$(curl -s "$url" 2>/dev/null); then
-                        yellow_echo "Warning: Failed to download $url for $file"
-                        # Skip adding content, but add the end marker
-                        new_content+="$line"$'\n'
-                        in_block=false
-                        continue
-                    fi
+                 else
+                     # Check HTTP status
+                     status=$(curl -s -w "%{http_code}" "$url" -o /dev/null)
+                     if [ "$status" -ne 200 ]; then
+                         red_echo "Error: Failed to download $url (HTTP $status)"
+                         # Skip adding content, but add the end marker
+                         new_content+="$line"$'\n'
+                         in_block=false
+                         continue
+                     fi
+                     # Download content
+                     if ! downloaded=$(curl -s "$url" 2>/dev/null); then
+                         red_echo "Error: Failed to download $url for $file"
+                         # Skip adding content, but add the end marker
+                         new_content+="$line"$'\n'
+                         in_block=false
+                         continue
+                     fi
                     new_content+="$downloaded"$'\n'
                 fi
                 new_content+="$line"$'\n'  # Add the end marker after content
