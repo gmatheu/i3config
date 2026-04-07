@@ -33,6 +33,7 @@ i3-window-toparent: Move currenet window to parent (${PRIMARY_DEVICE})
 battery-notify-on: Activate or show current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 battery-notify-off: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
 battery-notify-status: Kill current battery-notify process (pid:${BATTERY_NOTIFY_PID})
+default-layout: Create default layout
 settings-workspace: Creates settings workspace
 services-user-restart: Restart a user daemon
 services-user-status: Restart a user daemon
@@ -88,6 +89,25 @@ i3-window-toprimary)
 	;;
 i3-window-toparent)
 	i3-msg move window to parent
+	;;
+default-layout)
+	notify-send -u critical -r 323 -t 10000 "Actions: Default Layout" "Slowly creating default layout. \nWait until completion notification"
+	i3-msg workspace "10:etc"
+	gtk-launch blueman-manager
+	gtk-launch pavucontrol
+	i3-msg workspace "1:term"
+	sleep 1
+	pgrep kitty || gtk-launch kitty
+	sleep 1
+	i3-msg workspace "4:teams"
+	sleep 1
+	pgrep brave || gtk-launch brave-browser
+	sleep 1
+	i3-msg workspace "2:browser"
+	sleep 1
+	pgrep firefox || gtk-launch firefox_firefox
+	sleep 1
+	notify-send -u low -r 323 -t 1000 "Actions: Default Layout" "Layout completed"
 	;;
 settings-workspace)
 	i3-msg workspace "10:etc"
