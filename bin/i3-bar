@@ -6,6 +6,8 @@ MONITOR=$(xrandr | grep connected | grep -v 'disconnected' | grep primary | cut 
 EXTERNAL_MONITOR=$(xrandr | grep connected | grep -v 'disconnected' | grep -v primary | cut -d ' ' -f 1)
 
 MONITOR=${MONITOR} polybar main &
+MONITOR=${MONITOR} polybar right &
+MONITOR=${MONITOR} polybar top &
 if [[ "$EXTERNAL_MONITOR" != "" ]]; then
 	EXTERNAL_MONITOR=${EXTERNAL_MONITOR} polybar external &
 fi

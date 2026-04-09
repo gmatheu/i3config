@@ -61,8 +61,12 @@ ${CONFIG_HOME}/polybar/config.ini: ${CONFIG_HOME}/polybar
 	ln -sf $(CURDIR)/polybar/config.ini $@
 polybar-config: ${CONFIG_HOME}/polybar/config.ini
 
+
 polybar-test-main:
-	polybar -c polybar/config.ini main
+	polybar -c polybar/config.ini main &
+	polybar -c polybar/config.ini right
+polybar-test-top:
+	polybar -c polybar/config.ini top
 
 EXTERNAL_MONITOR=DP-1
 polybar-test-external:
