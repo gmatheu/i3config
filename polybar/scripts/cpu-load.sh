@@ -14,7 +14,7 @@ bar_used_foreground_1=#557755
 bar_used_foreground_2=#f5a70a
 bar_used_foreground_3=#ff5555
 
-show_numbers='true'
+show_numbers='false'
 function toggle() {
   if [[ $show_numbers = 'true' ]]; then
     show_numbers='false'
@@ -72,12 +72,13 @@ while true; do
     _1_min_output=$(colorize_value "$_1_min" "$(graph_load "$_1_min"):$_1_min")
     _5_min_output=$(colorize_value "$_5_min" "$(graph_load "$_5_min"):$_5_min")
     _10_min_output=$(colorize_value "$_10_min" "$(graph_load "$_10_min"):$_10_min")
+    echo "$_1_min_output $_5_min_output $_10_min_output"
   else
     _1_min_output=$(colorize_value "$_1_min" "$(graph_load "$_1_min")")
     _5_min_output=$(colorize_value "$_5_min" "$(graph_load "$_5_min")")
     _10_min_output=$(colorize_value "$_10_min" "$(graph_load "$_10_min")")
+    echo "$_1_min_output$_1_min_output$_5_min_output$_5_min_output$_10_min_output$_10_min_output"
   fi
-  echo "$_1_min_output $_5_min_output $_10_min_output"
   sleep 1 &
   sleep_pid=$!
   wait

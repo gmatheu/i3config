@@ -6,7 +6,7 @@
 action=${1:-""}
 battery_level=$(upower -i "$(upower -e | grep '/battery')" | grep percentage | tr -s ' ' | cut -d ' ' -f 3 | tr -d '%')
 battery_status=$(upower -i "$(upower -e | grep '/battery')" | grep state | tr -s ' ' | cut -d ' ' -f 3)
-power_button_cmd="echo sudo $HOME/.local/bin/frmw_ectool led power"
+power_button_cmd="sudo $HOME/.local/bin/frmw_ectool led power"
 skipfile="/tmp/i3-battery-monitor.skip"
 
 if [[ $action == "skip" ]]; then

@@ -2,7 +2,7 @@
 
 set -e
 
-NOTES_CMD="uvx stt-notes record "
+NOTES_CMD="/home/gmatheu/.local/bin/stt-notes record "
 BASE_CMD=$NOTES_CMD
 NOTES_DIR="$HOME/.local/share/stt-notes"
 
@@ -139,10 +139,10 @@ fi
 
 if command -v terminology >/dev/null 2>&1; then
 	if command -v catnip >/dev/null 2>&1; then
-		terminology -B -W --name=catnip --title=stt-notes --geometry 60x6+-700+220 -e 'tyalpha 0.6; catnip' &
+		terminology -B -W --name=catnip --title=catnip --geometry 60x5+-700+220 -e 'tyalpha 0.6; catnip' &
 	fi
 
-	terminology -B -W --name=stt-notes --title=stt-notes --geometry 60x6+-700+80 -e "$CMD" &&
+	terminology -B -W --name=stt-notes --title=stt-notes --geometry 60x6+-600+80 -e "$CMD" &&
 		find "${NOTES_DIR}" -name '*_note.txt' -mtime -1 | sort -r | head -n 1 | xargs -I{} cat {} | xclip -selection clipboard
 	pkill catnip
 else

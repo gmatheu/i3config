@@ -95,6 +95,10 @@ default-layout)
 	i3-msg workspace "10:etc"
 	gtk-launch blueman-manager
 	gtk-launch pavucontrol
+	sleep 1
+	i3-msg workspace "2:browser"
+	pgrep firefox || gtk-launch firefox_firefox
+	sleep 3
 	i3-msg workspace "1:term"
 	sleep 1
 	pgrep kitty || gtk-launch kitty
@@ -102,10 +106,6 @@ default-layout)
 	i3-msg workspace "4:teams"
 	sleep 1
 	pgrep brave || gtk-launch brave-browser
-	sleep 1
-	i3-msg workspace "2:browser"
-	sleep 1
-	pgrep firefox || gtk-launch firefox_firefox
 	sleep 1
 	notify-send -u low -r 323 -t 1000 "Actions: Default Layout" "Layout completed"
 	;;
