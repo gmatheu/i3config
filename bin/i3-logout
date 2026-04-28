@@ -21,7 +21,7 @@ BIN_DIR=$(dirname "$(readlink -f "$0")")
 case $option in
 suspend)
 	"$BIN_DIR"/i3-battery-monitor skip
-	lock && /usr/bin/systemctl suspend
+	lock && sudo /usr/bin/systemctl suspend-then-hibernate
 	;;
 'lock')
 	lock

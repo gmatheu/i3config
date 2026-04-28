@@ -25,6 +25,8 @@ bindsym $mod+Shift+semicolon exec $i3path/i3-mappings
 # bindsym $mod+Shift+x exec $i3path/i3-screen
 bindsym $mod+Shift+z exec $i3path/i3-pass
 bindsym $mod+Shift+a exec $i3path/i3-actions
+bindsym $mod+` exec $i3path/i3-toggle-polybar.sh
+bindsym $mod+~ exec $i3path/i3-toggle-polybar.sh
 
 # bindsym $mod+Ctrl+Shift+l exec --no-startup-id $i3lockwall
 bindsym $mod+Ctrl+Shift+l exec --no-startup-id i3lock --nofork $i3lockargs
