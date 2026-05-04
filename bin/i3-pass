@@ -6,7 +6,11 @@ help="Enter -> Clibpoard / Ctrl+Enter -> Copy name / Ctrl+Shift+enter -> RPA"
 actions="passupdate: Pull from remote\npasspush: Push to remote\n"
 password_entries=$(pass git ls-files | grep -v '.gpg-id' | sed -e 's/.gpg//' | xargs -I{} echo "{}\n")
 totp_entries=$(find ~/.password-store/totp -name '*.totp.sh' -printf '%f\n' | xargs -I{} echo "totp:{}\n")
-menu="${password_entries}\n${totp_entries}\n${actions}"
+
+HISTORY_FILE="$HOME/.local/share/i3-pass-history.txt"
+LRU_ENTRIES=5
+lru_entries=$(cat "${HISTORY_FILE}" | sort | uniq -c | sort -r | tr -s ' ' | cut -d ' ' -f 3 | head -n ${LRU_ENTRIES} | nl -d ':' | tr -s ' ' | sed -e 's/ /q/' -e 's/\t/: /' | xargs -I{} echo "{}\n")
+menu="${lru_entries}------------------------\n${password_entries}\n${totp_entries}\n${actions}"
 selection=$(echo -e ${menu} | grep -v '.gpg-id' | sed -e 's/.gpg//' |
 	rofi -threads 0 -width 100 \
 		-kb-accept-custom '' -kb-accept-custom-alt '' \
@@ -32,8 +36,16 @@ totp)
 	fi
 	;;
 *)
-	:
-	password=${action}
+	if [[ "$action" == "q"* ]]; then
+		password=$(echo "${selection}" | cut -d ':' -f 2 | tr -d '\n' | sed -e 's/ //')
+	else
+		password=${action}
+		if [ ! -z "${password}" ]; then
+			echo "${password}" >>"$HISTORY_FILE"
+			sed -n '1,50 p' -i "$HISTORY_FILE"
+		fi
+	fi
+
 	case $ret in
 	0)
 		if pass show "${password}" | head -n 1 | xclip -selection clipboard; then
