@@ -14,7 +14,10 @@ function lock {
 	# 	bash ~/.config/i3/plugins/i3-restore/i3-save
 	# fi
 
+	dunstctl set-paused true
 	i3lock ${LOCKWALL}
+	dunstctl set-paused false
+	notify-send "Screen Unlocked" "Welcome back!"
 }
 
 BIN_DIR=$(dirname "$(readlink -f "$0")")

@@ -1,28 +1,128 @@
 #!/usr/bin/env bash
+
 DISPLAY_NUM=99
 RESOLUTION="1920x1080x24"
-VNC_PORT=5901
+VNC_PORT=5910
 
-case "$1" in
-  start)
-    echo "Starting Xvfb :$DISPLAY_NUM ($RESOLUTION)..."
-    Xvfb :$DISPLAY_NUM -screen 0 $RESOLUTION &
-    XVFB_PID=$!
-    export DISPLAY=:$DISPLAY_NUM
-    echo "Starting x11vnc on port $VNC_PORT..."
-    x11vnc -display :$DISPLAY_NUM -nopw -forever -rfbport $VNC_PORT &
-    VNC_PID=$!
-    echo "Xvfb PID=$XVFB_PID, x11vnc PID=$VNC_PID"
-    ;;
-  stop)
-    echo "Stopping Xvfb and x11vnc..."
-    pkill -f "Xvfb :$DISPLAY_NUM"
-    pkill -f "x11vnc -display :$DISPLAY_NUM"
-    ;;
-  status)
-    pgrep -fl "Xvfb :$DISPLAY_NUM" && pgrep -fl "x11vnc -display :$DISPLAY_NUM"
-    ;;
-  *)
-    echo "Usage: $0 {start|stop|status}"
-    exit 1
+XVFB_PROCESS="Xvfb :${DISPLAY_NUM}"
+XVFB_PID=$(pgrep -f "${XVFB_PROCESS}")
+WM_PROCESS="fluxbox"
+WM_PID=$(pgrep -f "${WM_PROCESS}")
+X11VNC_PROCESS="x11vnc -display :${DISPLAY_NUM}"
+X11VNC_PID=$(pgrep -f "${X11VNC_PROCESS}")
+PLAYWRIGHT_MCP_PROCESS="playwright.*mcp"
+PLAYWRIGHT_MCP_PID=$(pgrep -f "${PLAYWRIGHT_MCP_PROCESS}")
+CHROME_PROCESS="chrome.*remote-debugging-port=9222"
+CHROME_PID=$(pgrep -f "${CHROME_PROCESS}")
+
+menu="start-all: Start Start Xvfb + fluxbox (display :${DISPLAY_NUM}, ${RESOLUTION}) + x11vnc (port ${VNC_PORT}) + Playwright MCP (port 8931) + Browser
+start-xvfb: Start Xvfb + fluxbox (display :${DISPLAY_NUM}, ${RESOLUTION})
+start-vnc: Start x11vnc VNC server (port ${VNC_PORT})
+start-playwright: Start Playwright MCP server (port 8931)
+start-chrome: Start Chrome browser on display :${DISPLAY_NUM}
+start-chrome-default: Start Chrome browser on default display
+stop-xvfb: Stop Xvfb + fluxbox (pid:${XVFB_PID:-not running}, ${WM_PROCESS}:${WM_PID:-not running})
+stop-vnc: Stop x11vnc (pid:${X11VNC_PID:-not running})
+stop-playwright: Stop Playwright MCP server (pid:${PLAYWRIGHT_MCP_PID:-not running})
+stop-chrome: Stop Chrome browser (pid:${CHROME_PID:-not running})
+stop-all: Stop all virtual display processes
+open-vnc: Open VNC viewer (localhost:${VNC_PORT})
+status:
+	Xvfb pid: ${XVFB_PID:-not running}
+	${WM_PROCESS} pid: ${WM_PID:-not running}
+	x11vnc pid: ${X11VNC_PID:-not running}
+	Playwright MCP pid: ${PLAYWRIGHT_MCP_PID:-not running}
+	Chrome pid: ${CHROME_PID:-not running}
+"
+
+action=${1:-""}
+if [ "$action" == "" ]; then
+	action=$(echo -e "$menu" | rofi -width 500 -dmenu -p 'Virtual Display' | cut -d ':' -f 1)
+fi
+
+case $action in
+start-all)
+	Xvfb :${DISPLAY_NUM} -screen 0 ${RESOLUTION} &
+	XVFB_PID=$!
+	export DISPLAY=:${DISPLAY_NUM}
+	${WM_PROCESS} &
+	WM_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Xvfb + fluxbox started (pid:${XVFB_PID}, ${WM_PROCESS}:${WM_PID})"
+
+	x11vnc -display :${DISPLAY_NUM} -nopw -forever -rfbport ${VNC_PORT} &
+	X11VNC_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "x11vnc started (pid:${X11VNC_PID})"
+
+	bunx @playwright/mcp@latest --port 8931 --cdp-endpoint http://127.0.0.1:9222 &
+	PLAYWRIGHT_MCP_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Playwright MCP started (pid:${PLAYWRIGHT_MCP_PID})"
+
+	google-chrome --remote-debugging-port=9222 --user-data-dir="$HOME/.cache/google-chrome/rpa" &
+	CHROME_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Chrome started (pid:${CHROME_PID})"
+	;;
+start-xvfb)
+	Xvfb :${DISPLAY_NUM} -screen 0 ${RESOLUTION} &
+	XVFB_PID=$!
+	export DISPLAY=:${DISPLAY_NUM}
+	${WM_PROCESS} &
+	WM_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Xvfb + fluxbox started (pid:${XVFB_PID}, ${WM_PROCESS}:${WM_PID})"
+	;;
+start-vnc)
+	x11vnc -display :${DISPLAY_NUM} -nopw -forever -rfbport ${VNC_PORT} &
+	X11VNC_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "x11vnc started (pid:${X11VNC_PID})"
+	;;
+start-playwright)
+	bunx @playwright/mcp@latest --port 8931 --cdp-endpoint http://127.0.0.1:9222 &
+	PLAYWRIGHT_MCP_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Playwright MCP started (pid:${PLAYWRIGHT_MCP_PID})"
+	;;
+start-chrome)
+	export DISPLAY=:${DISPLAY_NUM}
+	google-chrome --remote-debugging-port=9222 --user-data-dir="$HOME/.cache/google-chrome/rpa" &
+	CHROME_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Chrome started (pid:${CHROME_PID})"
+	;;
+start-chrome-default)
+	google-chrome --remote-debugging-port=9222 --user-data-dir="$HOME/.cache/google-chrome/rpa" &
+	CHROME_PID=$!
+	notify-send -u normal -t 2000 "Virtual Display" "Chrome started (pid:${CHROME_PID})"
+	;;
+stop-xvfb)
+	pkill -f "${WM_PROCESS}"
+	pkill -f "${XVFB_PROCESS}"
+	notify-send -u low -t 2000 "Virtual Display" "Xvfb + fluxbox stopped"
+	;;
+stop-vnc)
+	pkill -f "${X11VNC_PROCESS}"
+	notify-send -u low -t 2000 "Virtual Display" "x11vnc stopped"
+	;;
+stop-playwright)
+	pkill -f "${PLAYWRIGHT_MCP_PROCESS}"
+	notify-send -u low -t 2000 "Virtual Display" "Playwright MCP stopped"
+	;;
+stop-chrome)
+	pkill -f "${CHROME_PROCESS}"
+	notify-send -u low -t 2000 "Virtual Display" "Chrome stopped"
+	;;
+stop-all)
+	pkill -f "${CHROME_PROCESS}"
+	pkill -f "${PLAYWRIGHT_MCP_PROCESS}"
+	pkill -f "${X11VNC_PROCESS}"
+	pkill -f "${WM_PROCESS}"
+	pkill -f "${XVFB_PROCESS}"
+	notify-send -u low -t 2000 "Virtual Display" "All processes stopped"
+	;;
+open-vnc)
+	vncviewer localhost:${VNC_PORT} &
+	notify-send -u low -t 2000 "Virtual Display" "VNC viewer opened"
+	;;
+status)
+	echo -e "$menu" | rofi -width 500 -dmenu -p 'Virtual Display Status'
+	;;
+?)
+	notify-send -u critical -t 3000 "Virtual Display" "Unknown action: ${action}"
+	;;
 esac
