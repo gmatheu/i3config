@@ -4,6 +4,6 @@ bin_path=$1
 
 notify-send "Starting i3-battery-monitor ${bin_path}"
 while true; do
-	"$bin_path"/i3-battery-monitor
+	"$bin_path"/i3-battery-monitor || notify-send -u critical "Could not start i3-battery-monitor ${bin_path}"
 	sleep 300
 done &
