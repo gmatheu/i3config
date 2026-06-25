@@ -8,3 +8,4 @@ workspace_*.json
 # Ignore files created by this repository
 *.old
 #ln-remote-chunk:end
+/.playwright-mcp
